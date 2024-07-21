@@ -1,6 +1,35 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Outfit:wght@100..900&display=swap');
+
+:root {
+  --primary-bg: #171923;
+  --secondary-bg: #1A202C;
+  --accent-color: #1A5FFF;
+  --light-text: #A0AEC0;
+  --dark-text: #FFFFFFEB;
+  --border-color: rgba(255, 255, 255, 0.16);
+  --font-main: "Open Sans", sans-serif;
+  --font-alt: "Outfit", sans-serif;
+  --font-cursive: "Indie Flower", cursive;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+}
+
+body {
+  background: var(--primary-bg);
+}
+
+button {
+  outline: 0;
+  border: 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 5px;
+  background: var(--accent-color);
+  color: #fff;
+  cursor: pointer;
 }
