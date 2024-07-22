@@ -22,7 +22,7 @@ nav .action {
     gap: 20px;
 }
 
-nav .action button:first-child {
+nav .action .button:first-child {
     background: transparent;
     color: #7ea6ff;
     border: 1px solid #7ea6ff;

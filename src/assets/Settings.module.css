@@ -1,0 +1,53 @@
+.settings {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.title {
+    margin-top: 50px;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+.inputs {
+    position: relative;
+}
+
+.inputs input {
+    border: 1px solid #D0D0D0;
+    padding: 10px 40px;
+}
+
+.inputs img {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+}
+
+.inputs img:first-child {
+    left: 10px;
+}
+
+.inputs img:last-child {
+    right: 10px;
+    cursor: pointer;
+}
+
+.btnSubmit {
+    border-radius: 20px;
+    font-weight: normal;
+}
+
+.logout {
+    display: flex;
+    gap: 10px;
+    color: #CF3636;
+    position: absolute;
+    left: 50px;
+    bottom: 50px;
+}

@@ -1,5 +1,6 @@
 import React from 'react'
-import '../Lander.css'
+import { Link } from 'react-router-dom'
+import '../assets/Lander.css'
 
 function Homepage() {
     return (
@@ -10,8 +11,8 @@ function Homepage() {
                     FormBot
                 </div>
                 <div className="action">
-                    <button>Sign in</button>
-                    <button>Create a FormBot</button>
+                    <Link to="/login" className="button">Sign in</Link>
+                    <Link to="/register" className="button">Create a FormBot</Link>
                 </div>
             </nav>
             <section className="banner">
@@ -19,7 +20,7 @@ function Homepage() {
                     <h1>Build advanced chatbots visually</h1>
                     <p>Typebot gives you powerful blocks to create unique chat experiences. Embed them anywhere on your web/mobile apps and start collecting results like magic.</p>
                     <button>Create a FormBot for free</button>
-                    <img className="triangle" src="images/vectors/triangle.png" alt="" />
+                    <img className="triangle" src="images/vectors/triangle-single.png" alt="" />
                     <img className="semi-circle" src="images/vectors/semi-circle.png" alt="" />
                 </div>
                 <img src="images/banner.png" alt="" />
@@ -233,7 +234,7 @@ function Homepage() {
                     <h3>Improve conversion and user engagement with FormBots</h3>
                     <button>Create a FormBot</button>
                     <span className="desc">No trial. Generous <b>free</b> plan.</span>
-                    <img className="triangle" src="images/vectors/triangle.png" alt="" />
+                    <img className="triangle" src="images/vectors/triangle-single.png" alt="" />
                     <img className="semi-circle" src="images/vectors/semi-circle.png" alt="" />
                 </div>
             </section>

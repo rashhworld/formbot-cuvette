@@ -1,0 +1,73 @@
+.auth {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+}
+
+.goback {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: var(--dark-text);
+    width: 500px;
+}
+
+.inputs {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+    font-weight: 400;
+}
+
+form span {
+    color: #E53E3E;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 10px 20px;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+}
+
+a {
+    text-decoration: none;
+    color: var(--accent-color);
+}
+
+.vector {
+    position: absolute;
+}
+
+.triangleLayer {
+    top: 50%;
+    left: 1%;
+    transform: translateY(-50%);
+}
+
+.ellipsePink {
+    top: 20%;
+    right: 0;
+}
+
+.ellipseYellow {
+    bottom: 0;
+    right: 23%;
+}

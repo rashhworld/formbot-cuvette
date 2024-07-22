@@ -19,10 +19,12 @@
 }
 
 body {
+  color: var(--dark-text);
   background: var(--primary-bg);
 }
 
-button {
+button,
+.button {
   outline: 0;
   border: 0;
   padding: 10px 15px;
@@ -32,4 +34,5 @@ button {
   background: var(--accent-color);
   color: #fff;
   cursor: pointer;
+  text-decoration: none;
 }
