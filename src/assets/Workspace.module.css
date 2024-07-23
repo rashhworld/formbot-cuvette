@@ -1,0 +1,151 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #18181B;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.navbar input {
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    background: #37373E;
+}
+
+.space {
+    min-height: 100vh;
+    background: #1F1F23;
+}
+
+.formNav,
+.formAction {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.formNav a {
+    color: #fff;
+}
+
+.formNav .active {
+    border: 1px solid #7EA6FF;
+    border-radius: 5px;
+    padding: 5px 10px;
+    color: #7EA6FF;
+}
+
+.formAction button {
+    padding: 5px 15px;
+    font-weight: normal;
+    display: flex;
+}
+
+.formAction button:nth-child(2) {
+    background: #4ADE80CC;
+}
+
+.space {
+    padding-top: 80px;
+}
+
+.sidebar {
+    margin: auto 20px;
+    padding: 20px;
+    background: #18181B;
+    width: 350px;
+    height: calc(100vh - 150px);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    position: fixed;
+}
+
+.bubbles,
+.inputs {
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.sidebar button {
+    font-weight: normal;
+    background: #27272A;
+    color: var(--dark-text);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.layout {
+    float: right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 50px;
+    width: calc(100% - 390px);
+}
+
+.card {
+    position: relative;
+    width: 350px;
+    padding: 20px;
+    border-radius: 10px;
+    background: #18181B;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card .start {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.card .title {
+    font-weight: 600;
+}
+
+.card .remove {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background: #444444;
+    height: 35px;
+    width: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.inputBox {
+    position: relative;
+}
+
+.inputBox img {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+}
+
+.inputBox input {
+    padding: 10px 40px;
+    background: #1F1F23;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
