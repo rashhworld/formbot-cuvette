@@ -1,0 +1,51 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #18181B;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.navbar input {
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    background: #37373E;
+}
+
+.formNav,
+.formAction {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.formNav a,
+.formAction a {
+    color: #fff;
+    display: flex;
+}
+
+.formNav .active {
+    border: 1px solid #7EA6FF;
+    border-radius: 5px;
+    padding: 5px 10px;
+    color: #7EA6FF;
+}
+
+.formAction button {
+    padding: 5px 15px;
+    font-weight: normal;
+    display: flex;
+}
+
+.formAction button:nth-child(2) {
+    background: #4ADE80CC;
+}

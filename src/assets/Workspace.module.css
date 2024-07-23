@@ -1,71 +1,17 @@
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #18181B;
-    padding: 10px 20px;
-    box-sizing: border-box;
-    z-index: 1;
-}
-
-.navbar input {
-    padding: 5px 10px;
-    border: none;
-    outline: none;
-    border-radius: 5px;
-    background: #37373E;
-}
-
 .space {
-    min-height: 100vh;
     background: #1F1F23;
-}
-
-.formNav,
-.formAction {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.formNav a {
-    color: #fff;
-}
-
-.formNav .active {
-    border: 1px solid #7EA6FF;
-    border-radius: 5px;
-    padding: 5px 10px;
-    color: #7EA6FF;
-}
-
-.formAction button {
-    padding: 5px 15px;
-    font-weight: normal;
-    display: flex;
-}
-
-.formAction button:nth-child(2) {
-    background: #4ADE80CC;
-}
-
-.space {
-    padding-top: 80px;
+    overflow-y: auto;
 }
 
 .sidebar {
-    margin: auto 20px;
+    position: fixed;
+    margin: 80px 0 20px 20px;
     padding: 20px;
     background: #18181B;
     width: 350px;
     height: calc(100vh - 150px);
     border: 1px solid var(--border-color);
     border-radius: 10px;
-    position: fixed;
 }
 
 .bubbles,
@@ -86,13 +32,16 @@
 }
 
 .layout {
-    float: right;
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap: 50px;
+    gap: 40px;
+    padding-top: 80px;
+    padding-bottom: 20px;
+    margin-left: 350px;
     width: calc(100% - 390px);
+    height: 100vh;
+    box-sizing: border-box;
 }
 
 .card {

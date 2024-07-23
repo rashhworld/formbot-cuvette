@@ -6,6 +6,8 @@ import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard"
 import Settings from "./pages/Settings"
 import Workspace from "./pages/Workspace"
+import Theme from "./pages/Theme"
+import Response from "./pages/Response"
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/settings' element={<Settings />} />
         <Route path='/workspace' element={<Workspace />} />
+        <Route path='/theme' element={<Theme />} />
+        <Route path='/response' element={<Response />} />
       </Routes>
     </Router>
   )

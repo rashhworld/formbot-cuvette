@@ -1,25 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import styles from '../assets/Workspace.module.css';
+import Navbar from '../components/Navbar'
+import styles from '../assets/Workspace.module.css'
 
 function Workspace() {
     return (
         <main className={styles.workspace}>
-            <div className={styles.navbar}>
-                <div className={styles.formTitle}>
-                    <input type="text" placeholder="Enter Form Name" />
-                </div>
-                <div className={styles.formNav}>
-                    <Link to="/dashboard" className={styles.active}>Flow</Link>
-                    <Link to="/theme">Theme</Link>
-                    <Link to="/response">Response</Link>
-                </div>
-                <div className={styles.formAction}>
-                    <button>Share</button>
-                    <button>Save</button>
-                    <img src="icons/close.png" />
-                </div>
-            </div>
+            <Navbar />
             <div className={styles.space}>
                 <div className={styles.sidebar}>
                     <span>Bubbles</span>
