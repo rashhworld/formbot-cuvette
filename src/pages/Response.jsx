@@ -29,7 +29,7 @@ function Response() {
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Submitted at</th>
+                                <th>First interaction time</th>
                                 <th>Button 1</th>
                                 <th>Email 1</th>
                                 <th>Text 1</th>

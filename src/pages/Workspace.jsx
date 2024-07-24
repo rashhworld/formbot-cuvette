@@ -4,6 +4,23 @@ import Navbar from '../components/Navbar'
 import styles from '../assets/Workspace.module.css'
 
 function Workspace() {
+    const bubbleButtons = [
+        { src: "icons/chat.png", text: "Text" },
+        { src: "icons/photo.png", text: "Image" },
+        { src: "icons/video.png", text: "Video" },
+        { src: "icons/gif.png", text: "GIF" }
+    ];
+
+    const inputButtons = [
+        { src: "icons/letter-t.png", text: "Text" },
+        { src: "icons/hash.png", text: "Number" },
+        { src: "icons/at.png", text: "Email" },
+        { src: "icons/call.png", text: "Phone" },
+        { src: "icons/calendar.png", text: "Date" },
+        { src: "icons/star.png", text: "Rating" },
+        { src: "icons/checkbox.png", text: "Buttons" }
+    ];
+
     return (
         <main className={styles.workspace}>
             <Navbar />
@@ -11,20 +28,15 @@ function Workspace() {
                 <div className={styles.sidebar}>
                     <span>Bubbles</span>
                     <div className={styles.bubbles}>
-                        <button><img src="icons/chat.png" />Text</button>
-                        <button><img src="icons/photo.png" />Image</button>
-                        <button><img src="icons/video.png" />Video</button>
-                        <button><img src="icons/gif.png" />GIF</button>
+                        {bubbleButtons.map((button, index) => (
+                            <button key={index}><img src={button.src} />{button.text}</button>
+                        ))}
                     </div>
                     <span>Inputs</span>
                     <div className={styles.inputs}>
-                        <button><img src="icons/letter-t.png" />Text</button>
-                        <button><img src="icons/hash.png" />Number</button>
-                        <button><img src="icons/at.png" />Email</button>
-                        <button><img src="icons/call.png" />Phone</button>
-                        <button><img src="icons/calendar.png" />Date</button>
-                        <button><img src="icons/star.png" />Rating</button>
-                        <button><img src="icons/checkbox.png" />Buttons</button>
+                        {inputButtons.map((button, index) => (
+                            <button key={index}><img src={button.src} />{button.text}</button>
+                        ))}
                     </div>
                 </div>
                 <div className={styles.layout}>

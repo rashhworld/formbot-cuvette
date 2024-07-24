@@ -23,8 +23,7 @@ body {
   background: var(--primary-bg);
 }
 
-button,
-.button {
+button {
   outline: 0;
   border: 0;
   padding: 10px 15px;
@@ -35,4 +34,28 @@ button,
   color: #fff;
   cursor: pointer;
   text-decoration: none;
+}
+
+section {
+  padding: 100px 150px;
+  color: #fff;
+  text-align: center;
+}
+
+section h1 {
+  font-size: 72px;
+  font-family: var(--font-alt);
+  color: var(--dark-text);
+}
+
+section h3,
+div h3 {
+  color: var(--dark-text);
+  font-family: var(--font-alt);
+}
+
+section p,
+div p {
+  font-size: 20px;
+  color: var(--light-text);
 }

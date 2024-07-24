@@ -8,11 +8,9 @@
 }
 
 .chatbox span {
-    background: #f8f7ff;
     padding: 10px 15px;
     border-radius: 5px;
     max-width: fit-content;
-    color: #000;
 }
 
 .chatbox .admin {
@@ -26,6 +24,11 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
+}
+
+.chatbox .admin span {
+    background: #f8f7ff;
+    color: #000;
 }
 
 .chatbox .user {

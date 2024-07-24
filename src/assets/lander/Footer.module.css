@@ -1,0 +1,19 @@
+.footer {
+    padding: 50px 220px;
+    display: flex;
+    justify-content: space-around;
+    gap: 30px;
+    color: var(--dark-text);
+}
+
+.footer a,
+.footer li {
+    color: var(--dark-text);
+    list-style: none;
+    line-height: 2;
+}
+
+.icon {
+    margin-left: 5px;
+    width: 12px;
+}
