@@ -15,6 +15,9 @@
 
 .inputs {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .inputs input {
@@ -24,7 +27,7 @@
 
 .inputs img {
     position: absolute;
-    top: 50%;
+    top: 22px;
     transform: translateY(-50%);
     width: 25px;
 }
@@ -36,6 +39,11 @@
 .inputs img:last-child {
     right: 10px;
     cursor: pointer;
+}
+
+.inputs .error {
+    color: red;
+    font-size: 14px;
 }
 
 .btnSubmit {

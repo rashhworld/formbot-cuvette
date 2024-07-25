@@ -1,8 +1,17 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import styles from '../assets/Dashboard.module.css';
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import useAuth from '../components/useAuth'
+
+import styles from '../assets/Dashboard.module.css'
 
 function Dashboard() {
+    const token = useAuth();
+    const navigate = useNavigate();
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+    const [userData, setUserData] = useState([]);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -17,17 +26,39 @@ function Dashboard() {
         setCreateModalOpen(false);
     }
 
+    const showDashboard = async () => {
+        try {
+            const res = await axios.get(`${baseURL}/user/dashboard`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const { status, msg, data } = res.data;
+            setUserData(data);
+
+            if (status === 'jwtError') throw new Error();
+            else toast.error(msg);
+        } catch (error) {
+            toast.error("Something went wrong. Please re-login.");
+            navigate('/login');
+        }
+    };
+
+    useEffect(() => {
+        if (token) {
+            showDashboard();
+        }
+    }, [token]);
+
     return (
         <main className={styles.dashboard}>
             <div className={styles.navbar}>
                 <div className={`${styles.dropdown} ${isDropdownOpen ? styles.show : ''}`}>
                     <button className={styles.dropdownBtn} onClick={() => setDropdownOpen(!isDropdownOpen)}>
-                        <span>Rashmi Ranjan's workspace</span>
+                        <span>{userData.username}'s workspace</span>
                         <img className={styles.arrowDown} src="icons/arrow-angle-down.png" alt="" />
                     </button>
                     <div className={styles.dropdownContent}>
                         <Link to="/settings">Settings</Link>
-                        <a href="#" className={styles.logout}>Logout</a>
+                        <Link to="/login" onClick={() => localStorage.removeItem('authToken')} className={styles.logout}>Logout</Link>
                     </div>
                 </div>
             </div>

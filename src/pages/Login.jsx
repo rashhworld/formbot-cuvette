@@ -1,19 +1,76 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import styles from '../assets/Auth.module.css';
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+
+import styles from '../assets/Auth.module.css'
 
 function Login() {
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const [input, setInput] = useState({ email: "", password: "" });
+    const [error, setError] = useState({ email: "", password: "" });
+    const navigate = useNavigate();
+
+    const loginUser = async () => {
+        try {
+            const response = await axios.post(`${baseURL}/user/login`, input);
+
+            const { status, msg, token } = response.data;
+            if (status === 'success') {
+                localStorage.setItem('authToken', token);
+                navigate('/dashboard');
+            } else {
+                toast.error(msg);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong. Please re-login.");
+        }
+    };
+
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function validateForm(e) {
+        e.preventDefault()
+
+        let isError = false;
+        setError(() => { return { email: "", password: "" } });
+
+        Object.keys(input).forEach(key => {
+            const element = input[key];
+            if (typeof element === 'string' && element.trim().length === 0) {
+                isError = true;
+                setError(error => ({ ...error, [key]: "This field is required." }));
+            } else if (key === 'email' && !validateEmail(element)) {
+                isError = true;
+                setError(error => ({ ...error, [key]: "Enter a valid email Id." }));
+            } else if (key === 'password' && element.trim().length < 6) {
+                isError = true;
+                setError(error => ({ ...error, [key]: "Password must be 6 characters long." }));
+            }
+        });
+
+        if (!isError) {
+            loginUser();
+        }
+    }
+
     return (
         <main className={styles.auth}>
             <Link to="/"><img src="icons/arrow-back.png" className={styles.goback} width={20} alt="Go back" /></Link>
-            <form action="">
+            <form onSubmit={validateForm}>
                 <div className={styles.inputs}>
                     <label htmlFor="email">Email</label>
-                    <input type="email" id="email" placeholder="Enter your email" />
+                    <input type="email" id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Enter your email" />
+                    <label htmlFor="email" className={styles.error}>{error.email}</label>
                 </div>
                 <div className={styles.inputs}>
                     <label htmlFor="password">Password</label>
-                    <input type="password" id="password" placeholder="*******" />
+                    <input type="password" id="password" value={input.password} onChange={(e) => setInput({ ...input, password: e.target.value })} placeholder="*******" />
+                    <label htmlFor="password" className={styles.error}>{error.password}</label>
                 </div>
                 <button>Log In</button>
             </form>

@@ -59,3 +59,7 @@ div p {
   font-size: 20px;
   color: var(--light-text);
 }
+
+.Toastify__toast-container {
+  width: fit-content !important;
+}

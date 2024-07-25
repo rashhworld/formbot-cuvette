@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 import Homepage from "./pages/Homepage"
 import Login from "./pages/Login"
@@ -12,6 +14,7 @@ import Response from "./pages/Response"
 function App() {
   return (
     <Router>
+      <ToastContainer position="top-center" theme="colored" closeButton={false} />
       <Routes>
         <Route path='/' element={<Homepage />} />
         <Route path='/login' element={<Login />} />

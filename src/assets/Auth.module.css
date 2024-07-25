@@ -30,6 +30,11 @@ form {
     font-weight: 400;
 }
 
+.inputs .error {
+    color: red;
+    font-size: 14px;
+}
+
 form span {
     color: #E53E3E;
 }
