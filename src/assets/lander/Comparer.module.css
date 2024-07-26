@@ -59,19 +59,6 @@
     color: #E53E3E;
 }
 
-.oldForm form input[type=text],
-.oldForm form input[type=email],
-.oldForm form textarea {
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid var(--border-color);
-    border-radius: 7px;
-    padding: 10px 20px;
-    background: transparent;
-    color: #fff;
-    font-size: 16px;
-}
-
 .oldForm form input[type=checkbox] {
     width: 18px;
     height: 18px;

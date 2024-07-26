@@ -8,13 +8,7 @@
     position: relative;
 }
 
-.goback {
-    position: absolute;
-    top: 50px;
-    left: 50px;
-}
-
-form {
+.form {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -28,33 +22,6 @@ form {
     align-items: start;
     gap: 10px;
     font-weight: 400;
-}
-
-.inputs .error {
-    color: red;
-    font-size: 14px;
-}
-
-form span {
-    color: #E53E3E;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 10px 20px;
-    background: transparent;
-    color: #fff;
-    font-size: 16px;
-}
-
-a {
-    text-decoration: none;
-    color: var(--accent-color);
 }
 
 .vector {

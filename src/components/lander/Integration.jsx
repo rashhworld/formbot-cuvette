@@ -11,7 +11,7 @@ function Integration() {
             <div className={styles.wrapper}>
                 {images.map((image, index) => (
                     <div className={styles.images} key={index}>
-                        <img src={`images/integration/${image}.svg`} alt="" />
+                        <img src={`/images/integration/${image}.svg`} alt="integration platform" />
                     </div>
                 ))}
                 <div className={`${styles.overlay} ${styles.overlayLeft}`}></div>

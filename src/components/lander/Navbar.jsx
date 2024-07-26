@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <nav className={styles.navbar}>
       <div className={styles.logo}>
-        <img src="logo.png" height={35} alt="" />
+        <img src="/logo.png" height={35} alt="logo" />
         FormBot
       </div>
       <div className={styles.action}>

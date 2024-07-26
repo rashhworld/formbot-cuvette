@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import useAuth from '../components/useAuth'
+import useAuth from '../hooks/useAuth'
+import { handleApiRes, handleApiErr } from '../utils/apiUtils'
 
 import styles from '../assets/Settings.module.css'
 
@@ -14,23 +15,23 @@ function Settings() {
     const [input, setInput] = useState({ username: "", email: "", oldPassword: "", newPassword: "" });
     const [error, setError] = useState({ username: "", email: "", oldPassword: "", newPassword: "" });
 
+    const [showOldPassword, setShowOldPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+
     const updateUser = async () => {
         try {
             const response = await axios.post(`${baseURL}/user/update`, input, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const { status, msg } = response.data;
-
             if (status === 'success') {
                 toast.success(msg);
                 navigate('/dashboard');
             } else {
-                if (status === 'jwtError') throw new Error();
-                else toast.error(msg);
+                handleApiRes(response.data);
             }
         } catch (error) {
-            toast.error("Something went wrong. Please re-login.");
-            navigate('/login');
+            handleApiErr(error, navigate);
         }
     };
 
@@ -48,21 +49,34 @@ function Settings() {
         e.preventDefault()
 
         let isError = false;
-        setError(() => { return { username: "", email: "", oldPassword: "", newPassword: "", } });
+        setError(() => ({ username: "", email: "", oldPassword: "", newPassword: "", }));
 
-        Object.keys(input).forEach(key => {
-            const element = input[key];
-            if (typeof element === 'string' && element.trim().length === 0) {
+        if (input.email && !validateEmail(input.email)) {
+            isError = true;
+            setError((error) => ({ ...error, email: 'Enter a valid email format' }));
+        }
+
+        if (input.oldPassword) {
+            if (!validatePassword(input.oldPassword)) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "This field is required." }));
-            } else if (key === 'email' && !validateEmail(element)) {
-                isError = true;
-                setError(error => ({ ...error, [key]: "Enter a valid email Id." }));
-            } else if (key === 'newPassword' && !validatePassword(element)) {
-                isError = true;
-                setError(error => ({ ...error, [key]: "Password must be 6 characters long and include a letter and a number." }));
+                setError((error) => ({ ...error, oldPassword: 'Password must be 6+ chars, incl. letter & number' }));
             }
-        });
+            if (!input.newPassword) {
+                isError = true;
+                setError((error) => ({ ...error, newPassword: 'New password is required' }));
+            }
+        }
+
+        if (input.newPassword) {
+            if (!validatePassword(input.newPassword)) {
+                isError = true;
+                setError((error) => ({ ...error, newPassword: 'Password must be 6+ chars, incl. letter & number' }));
+            }
+            if (!input.oldPassword) {
+                isError = true;
+                setError((error) => ({ ...error, oldPassword: 'Old password is required' }));
+            }
+        }
 
         if (!isError) {
             updateUser();
@@ -71,35 +85,35 @@ function Settings() {
 
     return (
         <main className={styles.settings}>
+            <Link to="/dashboard"><img src="/icons/arrow-back.png" className="goback" alt="Go back" /></Link>
             <span className={styles.title}>Settings</span>
-            <form onSubmit={validateForm}>
+            <form onSubmit={validateForm} className={styles.form}>
                 <div className={styles.inputs}>
-                    <img src="icons/user.png" alt="" />
+                    <img src="/icons/user.png" alt="user icon" />
                     <input type="text" id="username" value={input.username} onChange={(e) => setInput({ ...input, username: e.target.value })} placeholder="Name" />
-                    <label htmlFor="username" className={styles.error}>{error.username}</label>
+                    <label htmlFor="username" className="error">{error.username}</label>
                 </div>
                 <div className={styles.inputs}>
-                    <img src="icons/lock.png" alt="" />
+                    <img src="/icons/mail.png" alt="mail icon" />
                     <input type="email" id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Update Email" />
-                    <label htmlFor="email" className={styles.error}>{error.email}</label>
-                    <img src="icons/eye-open.png" alt="" />
+                    <label htmlFor="email" className="error">{error.email}</label>
                 </div>
                 <div className={styles.inputs}>
-                    <img src="icons/lock.png" alt="" />
-                    <input type="password" id="oldPassword" value={input.oldPassword} onChange={(e) => setInput({ ...input, oldPassword: e.target.value })} placeholder="Old Password" />
-                    <label htmlFor="oldPassword" className={styles.error}>{error.oldPassword}</label>
-                    <img src="icons/eye-open.png" alt="" />
+                    <img src="/icons/lock.png" alt="lock icon" />
+                    <input type={showOldPassword ? 'text' : 'password'} id="oldPassword" value={input.oldPassword} onChange={(e) => setInput({ ...input, oldPassword: e.target.value })} placeholder="Old Password" />
+                    <label htmlFor="oldPassword" className="error">{error.oldPassword}</label>
+                    <img src="/icons/eye-open.png" onClick={() => setShowOldPassword(!showOldPassword)} alt="eye-open icon" />
                 </div>
                 <div className={styles.inputs}>
-                    <img src="icons/lock.png" alt="" />
-                    <input type="password" id="newPassword" value={input.newPassword} onChange={(e) => setInput({ ...input, newPassword: e.target.value })} placeholder="New Password" />
-                    <label htmlFor="newPassword" className={styles.error}>{error.newPassword}</label>
-                    <img src="icons/eye-open.png" alt="" />
+                    <img src="/icons/lock.png" alt="lock icon" />
+                    <input type={showNewPassword ? 'text' : 'password'} id="newPassword" value={input.newPassword} onChange={(e) => setInput({ ...input, newPassword: e.target.value })} placeholder="New Password" />
+                    <label htmlFor="newPassword" className="error">{error.newPassword}</label>
+                    <img src="/icons/eye-open.png" onClick={() => setShowNewPassword(!showNewPassword)} alt="eye-open icon" />
                 </div>
                 <button className={styles.btnSubmit}>Update</button>
             </form>
             <Link to="/login" onClick={() => localStorage.removeItem('authToken')} className={styles.logout}>
-                <img src="icons/arrow-out.png" alt="" />
+                <img src="/icons/arrow-out.png" alt="arrow-out icon" />
                 <span>Log out</span>
             </Link>
         </main>

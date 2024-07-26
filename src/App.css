@@ -23,6 +23,11 @@ body {
   background: var(--primary-bg);
 }
 
+a {
+  text-decoration: none;
+  color: var(--accent-color);
+}
+
 button {
   outline: 0;
   border: 0;
@@ -58,6 +63,33 @@ section p,
 div p {
   font-size: 20px;
   color: var(--light-text);
+}
+
+label.error {
+  font-size: 14px;
+  color: red;
+  font-weight: normal;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+  outline: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  background: transparent;
+  color: var(--dark-text);
+  font-size: 16px;
+}
+
+.goback {
+  position: absolute;
+  top: 50px;
+  left: 50px;
 }
 
 .Toastify__toast-container {

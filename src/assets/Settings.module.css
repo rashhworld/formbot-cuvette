@@ -8,9 +8,17 @@
 }
 
 .title {
+    font-size: 20px;
     margin-top: 50px;
     color: #FFFFFF;
-    font-weight: 600;
+    font-weight: 500;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 500px;
 }
 
 .inputs {
@@ -21,8 +29,8 @@
 }
 
 .inputs input {
-    border: 1px solid #D0D0D0;
-    padding: 10px 40px;
+    border: 1px solid #D0D0D0 !important;
+    padding: 10px 40px !important;
 }
 
 .inputs img {
@@ -39,11 +47,6 @@
 .inputs img:last-child {
     right: 10px;
     cursor: pointer;
-}
-
-.inputs .error {
-    color: red;
-    font-size: 14px;
 }
 
 .btnSubmit {

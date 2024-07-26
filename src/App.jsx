@@ -10,16 +10,18 @@ import Settings from "./pages/Settings"
 import Workspace from "./pages/Workspace"
 import Theme from "./pages/Theme"
 import Response from "./pages/Response"
+import Folders from "./pages/Folders"
 
 function App() {
   return (
     <Router>
-      <ToastContainer position="top-center" theme="colored" closeButton={false} />
+      <ToastContainer position="bottom-center" theme="colored" closeButton={false} />
       <Routes>
         <Route path='/' element={<Homepage />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/folder/:id' element={<Folders />} />
         <Route path='/settings' element={<Settings />} />
         <Route path='/workspace' element={<Workspace />} />
         <Route path='/theme' element={<Theme />} />

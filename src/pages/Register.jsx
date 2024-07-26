@@ -40,25 +40,25 @@ function Register() {
     }
 
     function validateForm(e) {
-        e.preventDefault()
+        e.preventDefault();
 
         let isError = false;
-        setError(() => { return { username: "", email: "", password: "", confirmPassword: "", } });
+        setError(() => ({ username: "", email: "", password: "", confirmPassword: "" }));
 
         Object.keys(input).forEach(key => {
             const element = input[key];
             if (typeof element === 'string' && element.trim().length === 0) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "This field is required." }));
+                setError(error => ({ ...error, [key]: "This field is required" }));
             } else if (key === 'email' && !validateEmail(element)) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "Enter a valid email Id." }));
+                setError(error => ({ ...error, [key]: "Enter a valid email Id" }));
             } else if (key === 'password' && !validatePassword(element)) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "Password must be 6 characters long and include a letter and a number." }));
+                setError(error => ({ ...error, [key]: "Password must be 6+ chars, incl. letter & number" }));
             } else if (key === 'confirmPassword' && element !== input.password) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "Passwords do not match with above password." }));
+                setError(error => ({ ...error, [key]: "Passwords do not match with above password" }));
             }
         });
 
@@ -69,34 +69,34 @@ function Register() {
 
     return (
         <main className={styles.auth}>
-            <Link to="/"><img src="icons/arrow-back.png" className={styles.goback} width={20} alt="" /></Link>
-            <form onSubmit={validateForm}>
+            <Link to="/"><img src="/icons/arrow-back.png" className="goback" alt="arrow-back icon" /></Link>
+            <form className={styles.form} onSubmit={validateForm}>
                 <div className={styles.inputs}>
                     <label htmlFor="username">Username</label>
                     <input type="text" id="username" value={input.username} onChange={(e) => setInput({ ...input, username: e.target.value })} placeholder="Enter a username" />
-                    <label htmlFor="username" className={styles.error}>{error.username}</label>
+                    <label htmlFor="username" className="error">{error.username}</label>
                 </div>
                 <div className={styles.inputs}>
                     <label htmlFor="email">Email</label>
                     <input type="email" id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Enter your email" />
-                    <label htmlFor="email" className={styles.error}>{error.email}</label>
+                    <label htmlFor="email" className="error">{error.email}</label>
                 </div>
                 <div className={styles.inputs}>
                     <label htmlFor="password">Password</label>
                     <input type="password" id="password" value={input.password} onChange={(e) => setInput({ ...input, password: e.target.value })} placeholder="*******" />
-                    <label htmlFor="password" className={styles.error}>{error.password}</label>
+                    <label htmlFor="password" className="error">{error.password}</label>
                 </div>
                 <div className={styles.inputs}>
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input type="password" id="confirmPassword" value={input.confirmPassword} onChange={(e) => setInput({ ...input, confirmPassword: e.target.value })} placeholder="*******" />
-                    <label htmlFor="confirmPassword" className={styles.error}>{error.confirmPassword}</label>
+                    <label htmlFor="confirmPassword" className="error">{error.confirmPassword}</label>
                 </div>
                 <button>Sign Up</button>
             </form>
             <span>Already have an account? <Link to="/login" className="link">Login</Link></span>
-            <img className={`${styles.vector} ${styles.triangleLayer}`} src="images/vectors/triangle-layer.png" width={240} />
-            <img className={`${styles.vector} ${styles.ellipsePink}`} src="images/vectors/ellipse-pink.png" width={80} />
-            <img className={`${styles.vector} ${styles.ellipseYellow}`} src="images/vectors/ellipse-yellow.png" height={80} />
+            <img className={`${styles.vector} ${styles.triangleLayer}`} src="/images/vectors/triangle-layer.png" width={240} alt="triangle-layer" />
+            <img className={`${styles.vector} ${styles.ellipsePink}`} src="/images/vectors/ellipse-pink.png" width={80} alt="ellipse-pink" />
+            <img className={`${styles.vector} ${styles.ellipseYellow}`} src="/images/vectors/ellipse-yellow.png" height={80} alt="ellipse-yellow" />
         </main>
     )
 }

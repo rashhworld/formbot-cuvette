@@ -16,7 +16,7 @@ function Navbar() {
             <div className={styles.formAction}>
                 <button>Share</button>
                 <button>Save</button>
-                <Link to="/dashboard"><img src="icons/close.png" /></Link>
+                <Link to="/dashboard"><img src="/icons/close.png" alt="close icon" /></Link>
             </div>
         </div>
     )

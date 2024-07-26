@@ -20,7 +20,7 @@ function Theme() {
                 <hr className={styles.hr} />
                 {themes.map((theme) => (
                     <div key={theme} className={`${styles.card} ${currentTheme === theme && styles.active}`} onClick={changeTheme(theme)}>
-                        <img src={`images/theme-${theme}.jpg`} alt={`${theme} Theme`} />
+                        <img src={`/images/theme-${theme}.jpg`} alt={`${theme} Theme`} />
                         <span className={styles.type}>{theme}</span>
                     </div>
                 ))}
@@ -28,7 +28,7 @@ function Theme() {
             <div className={`${styles.content} ${styles[currentTheme]}`}>
                 <div className={cstyles.chatbox}>
                     <div className={cstyles.admin}>
-                        <img className={cstyles.chatHead} src="images/vectors/chat-head.png" alt="" />
+                        <img className={cstyles.chatHead} src="/images/vectors/chat-head.png" alt="admin chat-head" />
                         <div className={cstyles.chat}>
                             <span>Hello!</span>
                         </div>

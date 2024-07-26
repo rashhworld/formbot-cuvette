@@ -115,12 +115,16 @@
     left: 240px;
     width: 300px;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
     border: 1px solid var(--border-color);
     border-radius: 10px;
     font-weight: 600;
+}
+
+.createFolderModal .inputs {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .deleteFolderModal {
@@ -130,14 +134,14 @@
 }
 
 .createFolderModal input {
-    border: none;
-    background: #1F1F23;
-    outline: none;
+    border: none !important;
+    background: #1F1F23 !important;
 }
 
 .action {
+    margin-top: 20px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
     cursor: pointer;
 }
