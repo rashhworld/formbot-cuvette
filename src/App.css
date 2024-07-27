@@ -67,7 +67,7 @@ div p {
 
 label.error {
   font-size: 14px;
-  color: red;
+  color: #F55050;
   font-weight: normal;
 }
 
@@ -84,6 +84,11 @@ textarea {
   background: transparent;
   color: var(--dark-text);
   font-size: 16px;
+}
+
+input.error,
+textarea.error {
+  border: 1px solid #F55050 !important;
 }
 
 .goback {

@@ -28,10 +28,14 @@
 }
 
 .icon {
-    height: 50px;
-    width: 50px;
     display: block;
     margin: 0 auto;
+    padding: 15px;
+    border-radius: 50%;
+}
+
+.oldForm .icon {
+    background: #F87171CC;
 }
 
 .oldForm form {
@@ -66,6 +70,10 @@
 
 .oldForm form button {
     width: 25%;
+}
+
+.newForm .icon {
+    background: #4ADE80CC;
 }
 
 .newForm .tryit {

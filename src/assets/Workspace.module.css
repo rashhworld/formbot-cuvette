@@ -92,9 +92,8 @@
 }
 
 .inputBox input {
-    padding: 10px 40px;
-    background: #1F1F23;
-    border: none;
-    outline: none;
-    border-radius: 5px;
+    padding: 10px 40px !important;
+    background: #1F1F23 !important;
+    border: none !important;
+    border-radius: 5px !important;
 }

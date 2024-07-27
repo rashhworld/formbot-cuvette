@@ -19,19 +19,24 @@ function Dashboard() {
     const [folderName, setFolderName] = useState(null);
     const [folderNameError, setFolderNameError] = useState(null);
 
+    const [allForm, setAllForm] = useState([]);
+    const [formId, setFormId] = useState(null);
+    const [entityType, setEntityType] = useState(null);
+
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const openCreateModal = () => {
         setFolderName('');
-        setFolderNameError();
+        setFolderNameError('');
         setCreateModalOpen(true);
         setDeleteModalOpen(false);
     }
 
-    const openDeleteModal = (id) => {
-        setFolderId(id);
+    const openDeleteModal = (id, type = "folder") => {
+        setEntityType(type); setFormId(null); setFolderId(null);
+        if (type == "form") setFormId(id); else setFolderId(id);
         setDeleteModalOpen(true);
         setCreateModalOpen(false);
     }
@@ -45,6 +50,7 @@ function Dashboard() {
             if (status === 'success') {
                 setUserData(data);
                 fetchAllFolder();
+                fetchAllForm();
             } else {
                 handleApiRes(response.data);
             }
@@ -52,26 +58,6 @@ function Dashboard() {
             handleApiErr(error, navigate);
         }
     };
-
-    const fetchAllFolder = async () => {
-        try {
-            const response = await axios.get(`${baseURL}/folder/view`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, data } = response.data;
-            if (status === 'success') {
-                setAllFolder(data);
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
-    };
-
-    const openFolder = (id) => {
-        navigate(`/folder/${id}`);
-    }
 
     const createFolder = async () => {
         setFolderNameError('');
@@ -97,6 +83,26 @@ function Dashboard() {
         }
     };
 
+    const fetchAllFolder = async () => {
+        try {
+            const response = await axios.get(`${baseURL}/folder/view`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const { status, data } = response.data;
+            if (status === 'success') {
+                setAllFolder(data);
+            } else {
+                handleApiRes(response.data);
+            }
+        } catch (error) {
+            handleApiErr(error, navigate);
+        }
+    };
+
+    const openFolder = (id) => {
+        navigate(`/folder/${id}`);
+    }
+
     const deleteFolder = async () => {
         try {
             const response = await axios.delete(`${baseURL}/folder/delete/${folderId}`, {
@@ -107,6 +113,40 @@ function Dashboard() {
                 toast.success(msg);
                 setDeleteModalOpen(false);
                 fetchAllFolder();
+            } else {
+                handleApiRes(response.data);
+            }
+        } catch (error) {
+            handleApiErr(error, navigate);
+        }
+    };
+
+    const fetchAllForm = async () => {
+        try {
+            const response = await axios.get(`${baseURL}/form/view`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const { status, data } = response.data;
+            if (status === 'success') {
+                setAllForm(data);
+            } else {
+                handleApiRes(response.data);
+            }
+        } catch (error) {
+            handleApiErr(error, navigate);
+        }
+    };
+
+    const deleteForm = async () => {
+        try {
+            const response = await axios.delete(`${baseURL}/form/delete/${formId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const { status, msg } = response.data;
+            if (status === 'success') {
+                toast.success(msg);
+                setDeleteModalOpen(false);
+                fetchAllForm();
             } else {
                 handleApiRes(response.data);
             }
@@ -142,31 +182,31 @@ function Dashboard() {
                         <span>Create a folder</span>
                     </button>
                     {allFolder.map((folder, key) => (
-                        <button className={styles.createOpen} key={key} onClick={() => openFolder(folder._id)}>
-                            <span>{folder.folderName}</span>
+                        <button className={styles.createOpen} key={key}>
+                            <span onClick={() => openFolder(folder._id)}>{folder.folderName}</span>
                             <img src="/icons/delete.png" onClick={() => openDeleteModal(folder._id)} alt="trash icon" />
                         </button>
                     ))}
                 </div>
                 <div className={styles.forms}>
-                    <div className={styles.card}>
+                    <Link to="/workspace" className={styles.card}>
                         <img src="/icons/plus.png" alt="plus icon" />
                         <span>Create a typebot</span>
-                    </div>
-                    <div className={`${styles.card} ${styles.created}`}>
-                        <img className={styles.delete} src="/icons/delete.png" width={20} alt="trash icon" />
-                        <span>My new form</span>
-                    </div>
-                    <div className={`${styles.card} ${styles.created}`}>
-                        <img className={styles.delete} src="/icons/delete.png" width={20} alt="trash icon" />
-                        <span>Customer form</span>
-                    </div>
+                    </Link>
+                    {allForm.map((form, key) => (
+                        <div className={styles.formCard} key={key}>
+                            <img className={styles.delete} src="/icons/delete.png" onClick={() => openDeleteModal(form._id, 'form')} width={20} alt="trash icon" />
+                            <Link to={`/workspace?wid=${form._id}`} className={`${styles.card} ${styles.created}`}>
+                                <span>{form.formName}</span>
+                            </Link>
+                        </div>
+                    ))}
                     {isCreateModalOpen &&
                         <div className={styles.createFolderModal}>
                             <span>Create New Folder</span>
                             <form>
                                 <div className={styles.inputs}>
-                                    <input type="text" value={folderName} onChange={(e) => setFolderName(e.target.value)} placeholder="Enter folder name" />
+                                    <input type="text" className={folderNameError && 'error'} value={folderName} onChange={(e) => setFolderName(e.target.value)} placeholder="Enter folder name" />
                                     <label className="error">{folderNameError}</label>
                                 </div>
                                 <div className={styles.action}>
@@ -179,9 +219,9 @@ function Dashboard() {
                     }
                     {isDeleteModalOpen &&
                         <div className={styles.deleteFolderModal}>
-                            <span>Are you sure you want to delete this folder ?</span>
+                            <span>Are you sure you want to delete this {entityType} ?</span>
                             <div className={styles.action}>
-                                <span className={styles.confirm} onClick={deleteFolder}>Confirm</span>
+                                <span className={styles.confirm} onClick={entityType == "folder" ? deleteFolder : deleteForm}>Confirm</span>
                                 <span></span>
                                 <span className={styles.cancel} onClick={() => setDeleteModalOpen(false)}>Cancel</span>
                             </div>

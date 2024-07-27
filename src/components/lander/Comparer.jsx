@@ -9,7 +9,7 @@ function Comparer() {
             <p>Typebot is a better way to ask for information. It leads to an increase in customer satisfaction and retention and multiply by 3 your conversion rate compared to classical forms.</p>
             <div className={styles.types}>
                 <div className={styles.oldForm}>
-                    <img className={styles.icon} src="/icons/bg-cross.png" alt="cross icon" />
+                    <img className={styles.icon} src="/icons/times.png" alt="cross icon" />
                     <form>
                         <div className={styles.inputs}>
                             <label htmlFor="name">Full name <span>*</span></label>
@@ -46,7 +46,7 @@ function Comparer() {
                     </form>
                 </div>
                 <div className={styles.newForm}>
-                    <img className={styles.icon} src="/icons/bg-tick.png" alt="tick icon" />
+                    <img className={styles.icon} src="/icons/tick.png" alt="tick icon" />
                     <div className={styles.tryit}>
                         <span>Try it out!</span>
                         <img src="/images/vectors/arrow-bend.png" alt="arrow-bend icon" />

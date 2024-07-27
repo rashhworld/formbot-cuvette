@@ -73,22 +73,22 @@ function Register() {
             <form className={styles.form} onSubmit={validateForm}>
                 <div className={styles.inputs}>
                     <label htmlFor="username">Username</label>
-                    <input type="text" id="username" value={input.username} onChange={(e) => setInput({ ...input, username: e.target.value })} placeholder="Enter a username" />
+                    <input type="text" className={error.username && 'error'} id="username" value={input.username} onChange={(e) => setInput({ ...input, username: e.target.value })} placeholder="Enter a username" />
                     <label htmlFor="username" className="error">{error.username}</label>
                 </div>
                 <div className={styles.inputs}>
                     <label htmlFor="email">Email</label>
-                    <input type="email" id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Enter your email" />
+                    <input type="email" className={error.email && 'error'} id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Enter your email" />
                     <label htmlFor="email" className="error">{error.email}</label>
                 </div>
                 <div className={styles.inputs}>
                     <label htmlFor="password">Password</label>
-                    <input type="password" id="password" value={input.password} onChange={(e) => setInput({ ...input, password: e.target.value })} placeholder="*******" />
+                    <input type="password" className={error.password && 'error'} id="password" value={input.password} onChange={(e) => setInput({ ...input, password: e.target.value })} placeholder="*******" />
                     <label htmlFor="password" className="error">{error.password}</label>
                 </div>
                 <div className={styles.inputs}>
                     <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" value={input.confirmPassword} onChange={(e) => setInput({ ...input, confirmPassword: e.target.value })} placeholder="*******" />
+                    <input type="password" className={error.confirmPassword && 'error'} id="confirmPassword" value={input.confirmPassword} onChange={(e) => setInput({ ...input, confirmPassword: e.target.value })} placeholder="*******" />
                     <label htmlFor="confirmPassword" className="error">{error.confirmPassword}</label>
                 </div>
                 <button>Sign Up</button>

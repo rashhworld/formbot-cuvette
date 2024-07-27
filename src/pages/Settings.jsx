@@ -95,18 +95,18 @@ function Settings() {
                 </div>
                 <div className={styles.inputs}>
                     <img src="/icons/mail.png" alt="mail icon" />
-                    <input type="email" id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Update Email" />
+                    <input type="email" className={error.email && 'error'} id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Update Email" />
                     <label htmlFor="email" className="error">{error.email}</label>
                 </div>
                 <div className={styles.inputs}>
                     <img src="/icons/lock.png" alt="lock icon" />
-                    <input type={showOldPassword ? 'text' : 'password'} id="oldPassword" value={input.oldPassword} onChange={(e) => setInput({ ...input, oldPassword: e.target.value })} placeholder="Old Password" />
+                    <input type={showOldPassword ? 'text' : 'password'} className={error.oldPassword && 'error'} id="oldPassword" value={input.oldPassword} onChange={(e) => setInput({ ...input, oldPassword: e.target.value })} placeholder="Old Password" />
                     <label htmlFor="oldPassword" className="error">{error.oldPassword}</label>
                     <img src="/icons/eye-open.png" onClick={() => setShowOldPassword(!showOldPassword)} alt="eye-open icon" />
                 </div>
                 <div className={styles.inputs}>
                     <img src="/icons/lock.png" alt="lock icon" />
-                    <input type={showNewPassword ? 'text' : 'password'} id="newPassword" value={input.newPassword} onChange={(e) => setInput({ ...input, newPassword: e.target.value })} placeholder="New Password" />
+                    <input type={showNewPassword ? 'text' : 'password'} className={error.newPassword && 'error'} id="newPassword" value={input.newPassword} onChange={(e) => setInput({ ...input, newPassword: e.target.value })} placeholder="New Password" />
                     <label htmlFor="newPassword" className="error">{error.newPassword}</label>
                     <img src="/icons/eye-open.png" onClick={() => setShowNewPassword(!showNewPassword)} alt="eye-open icon" />
                 </div>

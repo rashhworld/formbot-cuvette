@@ -13,37 +13,45 @@
 }
 
 .navbar input {
-    padding: 5px 10px;
-    border: none;
-    outline: none;
-    border-radius: 5px;
-    background: #37373E;
+    padding: 5px 10px !important;
+    border: none !important;
+    border-radius: 5px !important;
+    background: #37373E !important;
 }
 
 .formNav,
 .formAction {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .formNav a,
 .formAction a {
     color: #fff;
     display: flex;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    padding: 5px 10px;
 }
 
 .formNav .active {
     border: 1px solid #7EA6FF;
-    border-radius: 5px;
-    padding: 5px 10px;
     color: #7EA6FF;
 }
 
+.formAction {
+    gap: 15px;
+}
+
 .formAction button {
-    padding: 5px 15px;
+    padding: 5px 20px;
     font-weight: normal;
     display: flex;
+}
+
+.formAction button:disabled {
+    background: #848890;
 }
 
 .formAction button:nth-child(2) {

@@ -64,12 +64,12 @@ function Login() {
             <form className={styles.form} onSubmit={validateForm}>
                 <div className={styles.inputs}>
                     <label htmlFor="email">Email</label>
-                    <input type="email" id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Enter your email" />
+                    <input type="email" className={error.email && 'error'} id="email" value={input.email} onChange={(e) => setInput({ ...input, email: e.target.value })} placeholder="Enter your email" />
                     <label htmlFor="email" className="error">{error.email}</label>
                 </div>
                 <div className={styles.inputs}>
                     <label htmlFor="password">Password</label>
-                    <input type="password" id="password" value={input.password} onChange={(e) => setInput({ ...input, password: e.target.value })} placeholder="*******" />
+                    <input type="password" className={error.password && 'error'} id="password" value={input.password} onChange={(e) => setInput({ ...input, password: e.target.value })} placeholder="*******" />
                     <label htmlFor="password" className="error">{error.password}</label>
                 </div>
                 <button>Log In</button>
