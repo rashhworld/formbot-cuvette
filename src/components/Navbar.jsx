@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { NavLink, useNavigate, useSearchParams } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import useAuth from '../hooks/useAuth'
@@ -10,9 +10,12 @@ import styles from '../assets/Navbar.module.css'
 function Navbar() {
     const token = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const currentUrl = `${location.pathname}${location.search}`;
     const [searchParams] = useSearchParams();
     const baseURL = import.meta.env.VITE_API_BASE_URL;
 
+    const [folderId, setFolderId] = useState(searchParams.get('fid'));
     const [formId, setFormId] = useState(searchParams.get('wid'));
     const [formName, setFormName] = useState('');
     const [formNameError, setFormNameError] = useState('');
@@ -24,12 +27,12 @@ function Navbar() {
             setFormNameError('Enter form name');
         } else {
             try {
-                const response = await axios.post(`${baseURL}/form/create`, { formName }, {
+                const response = await axios.post(`${baseURL}/form/create`, { folderId, formName }, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const { status, formId } = response.data;
                 if (status === 'success') {
-                    setFormId(formId)
+                    setFormId(formId);
                     navigate(`/workspace?wid=${formId}`);
                 } else {
                     handleApiRes(response.data);
@@ -91,9 +94,9 @@ function Navbar() {
                 <input type="text" className={formNameError && 'error'} value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Enter Form Name" />
             </div>
             <div className={styles.formNav}>
-                <NavLink to={formId ? `/workspace?wid=${formId}` : ""} className={({ isActive }) => isActive && styles.active}>Flow</NavLink>
-                <NavLink to={formId ? `/theme?wid=${formId}` : ""} className={({ isActive }) => (isActive && formId) && styles.active}>Theme</NavLink>
-                <NavLink to={formId ? `/response?wid=${formId}` : ""} className={({ isActive }) => (isActive && formId) && styles.active}>Response</NavLink>
+                <NavLink to={formId ? `/workspace?wid=${formId}` : currentUrl} className={({ isActive }) => isActive ? styles.active : ''}>Flow</NavLink>
+                <NavLink to={formId ? `/theme?wid=${formId}` : currentUrl} className={({ isActive }) => isActive && formId ? styles.active : ''}>Theme</NavLink>
+                <NavLink to={formId ? `/response?wid=${formId}` : currentUrl} className={({ isActive }) => isActive && formId ? styles.active : ''}>Response</NavLink>
             </div>
             <div className={styles.formAction}>
                 <button disabled={!formId}>Share</button>

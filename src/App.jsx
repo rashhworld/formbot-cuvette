@@ -21,7 +21,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/folder/:id' element={<Folders />} />
+        <Route path='/folder/:fid' element={<Folders />} />
         <Route path='/settings' element={<Settings />} />
         <Route path='/workspace' element={<Workspace />} />
         <Route path='/theme' element={<Theme />} />
