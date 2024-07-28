@@ -7,7 +7,7 @@ import { handleApiRes, handleApiErr } from '../utils/apiUtils'
 
 import styles from '../assets/Navbar.module.css'
 
-function Navbar() {
+function Navbar({ setWorkspaceId, updateFormSequence }) {
     const token = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -18,6 +18,7 @@ function Navbar() {
     const [folderId, setFolderId] = useState(searchParams.get('fid'));
     const [formId, setFormId] = useState(searchParams.get('wid'));
     const [formName, setFormName] = useState('');
+    const [formSequence, setFormSequence] = useState('');
     const [formNameError, setFormNameError] = useState('');
 
     const createForm = async () => {
@@ -32,7 +33,7 @@ function Navbar() {
                 });
                 const { status, formId } = response.data;
                 if (status === 'success') {
-                    setFormId(formId);
+                    setFormId(formId); setWorkspaceId(formId);
                     navigate(`/workspace?wid=${formId}`);
                 } else {
                     handleApiRes(response.data);
@@ -51,6 +52,7 @@ function Navbar() {
             const { status, data } = response.data;
             if (status === 'success') {
                 setFormName(data.formName);
+                setFormSequence(data.formSequence);
             } else {
                 handleApiRes(response.data);
             }
@@ -72,7 +74,7 @@ function Navbar() {
                 const { status } = response.data;
                 if (status === 'success') {
                     setFormName(formName);
-                    toast.success("Form name updated successfully.")
+                    // toast.success("Form updated successfully.")
                 } else {
                     handleApiRes(response.data);
                 }
@@ -81,6 +83,18 @@ function Navbar() {
             }
         }
     };
+
+    const handleFormSave = async () => {
+        if (formId) {
+            if (updateFormSequence) {
+                await updateFormSequence();
+                fetchFormById();
+            }
+            await updateForm();
+        } else {
+            await createForm();
+        }
+    }
 
     useEffect(() => {
         if (token) {
@@ -99,8 +113,8 @@ function Navbar() {
                 <NavLink to={formId ? `/response?wid=${formId}` : currentUrl} className={({ isActive }) => isActive && formId ? styles.active : ''}>Response</NavLink>
             </div>
             <div className={styles.formAction}>
-                <button disabled={!formId}>Share</button>
-                <button onClick={!formId ? createForm : updateForm}>Save</button>
+                <button disabled={formSequence.length == 0}>Share</button>
+                <button onClick={handleFormSave}>Save</button>
                 <NavLink to="/dashboard"><img src="/icons/close.png" alt="close icon" /></NavLink>
             </div>
         </div>

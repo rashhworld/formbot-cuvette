@@ -1,41 +1,192 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import useAuth from '../hooks/useAuth'
+import { handleApiRes, handleApiErr } from '../utils/apiUtils'
 import Navbar from '../components/Navbar'
+
 import styles from '../assets/Workspace.module.css'
 
 function Workspace() {
-    const bubbleButtons = [
-        { src: "chat.png", text: "Text" },
-        { src: "photo.png", text: "Image" },
-        { src: "video.png", text: "Video" },
-        { src: "gif.png", text: "GIF" }
+    const token = useAuth();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+    const [formId, setFormId] = useState(searchParams.get('wid'));
+    const [formBox, setFormBox] = useState([]);
+    const [clickCounts, setClickCounts] = useState({});
+
+    const adminButtons = [
+        { role: "admin", src: "chat.png", type: "Text", hint: "Click here to edit", value: "" },
+        { role: "admin", src: "photo.png", type: "Image", hint: "Click to add link", value: "" },
+        { role: "admin", src: "video.png", type: "Video", hint: "Click to add link", value: "" },
+        { role: "admin", src: "gif.png", type: "GIF", hint: "Click to add link", value: "" }
     ];
 
-    const inputButtons = [
-        { src: "text.png", text: "Text" },
-        { src: "hash.png", text: "Number" },
-        { src: "at.png", text: "Email" },
-        { src: "call.png", text: "Phone" },
-        { src: "calendar.png", text: "Date" },
-        { src: "star.png", text: "Rating" },
-        { src: "checkbox.png", text: "Buttons" }
+    const userButtons = [
+        { role: "user", src: "text.png", type: "Text", hint: "input a text on his form" },
+        { role: "user", src: "hash.png", type: "Number", hint: "input a number on his form" },
+        { role: "user", src: "at.png", type: "Email", hint: "input a email on his form" },
+        { role: "user", src: "call.png", type: "Phone", hint: "input a phone on his form" },
+        { role: "user", src: "calendar.png", type: "Date", hint: "select a date" },
+        { role: "user", src: "star.png", type: "Rating", hint: "tap to rate out of 5" },
+        { role: "user", src: "checkbox.png", type: "Buttons", hint: "click on the button" }
     ];
+
+    const handleAddBox = (data) => {
+        if (!formId) { toast.error("Enter form name and hit save."); return }
+        const key = `${data.role}-${data.type}`;
+        const newCount = (clickCounts[key] || 0) + 1;
+        setClickCounts((prevCounts) => ({ ...prevCounts, [key]: newCount }));
+
+        setFormBox([...formBox, { key: key + ":" + newCount, data }]);
+    };
+
+    const handleRemoveBox = (index) => {
+        const oldbox = formBox[index];
+        const [oldKey, oldVal] = oldbox.key.split(":");
+
+        const newbox = formBox.filter((_, idx) => idx !== index);
+        const newFormBox = newbox.map((element) => {
+            const [curKey, curVal] = element.key.split(":");
+
+            if (curKey === oldKey && parseInt(curVal) > oldVal) {
+                const newele = { ...element };
+                newele.key = curKey + ":" + (parseInt(curVal) - 1);
+                return newele;
+            } else {
+                return element;
+            }
+        });
+
+        const newCount = (clickCounts[oldKey] || 0) - 1;
+        setClickCounts((prevCounts) => ({ ...prevCounts, [oldKey]: newCount }));
+
+        setFormBox(newFormBox);
+    };
+
+    const getFormBoxValue = (index, value) => {
+        const newFormBox = formBox.map((element, idx) => {
+            if (idx == index) {
+                const newele = { ...element };
+                newele.data.value = value;
+                return newele;
+            } else {
+                return element;
+            }
+        });
+
+        setFormBox(newFormBox);
+    }
+
+    const renderFormBox = (button, index) => {
+        const { role, src, type, hint, value } = button.data;
+        return (
+            <div key={index} className={styles.card}>
+                <div className={styles.remove} onClick={() => handleRemoveBox(index)} >
+                    <img src="/icons/delete.png" alt="trash icon" />
+                </div>
+                <span className={styles.title}>{`${role === "user" ? 'Input ' : ''}${type} ${button.key.split(":")[1]}`}</span>
+                <div className={styles.inputBox}>
+                    {role === "admin" ? (
+                        <div>
+                            <img src={`/icons/${src}`} alt={`${type} icon`} />
+                            <input type="text" id="fvalue" value={value} className={!value ? "error" : ""} onChange={(e) => getFormBoxValue(index, e.target.value)} placeholder={hint} />
+                            {!value && <label htmlFor="fvalue" className="error">Required Field</label>}
+                        </div>
+                    ) : (
+                        <span className={styles.hintText}>Hint: User will {hint}</span>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    const fetchFormById = async () => {
+        try {
+            const response = await axios.get(`${baseURL}/form/view/${formId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const { status, data } = response.data;
+            if (status === 'success') {
+                setFormBox(data.formSequence);
+            } else {
+                handleApiRes(response.data);
+            }
+        } catch (error) {
+            handleApiErr(error, navigate);
+        }
+    };
+
+    const updateFormSequence = async () => {
+        let error = false;
+
+        formBox.forEach((element) => {
+            if (element.data.role === "admin" && !element.data.value) error = true;
+        })
+
+        if (!error) {
+            try {
+                const response = await axios.patch(`${baseURL}/form/update/${formId}`, { formSequence: formBox }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const { status } = response.data;
+                if (status === 'success') {
+                    toast.success("Form updated successfully.");
+                } else {
+                    handleApiRes(response.data);
+                }
+            } catch (error) {
+                handleApiErr(error, navigate);
+            }
+        } else { toast.error("Please fill all the required fields"); }
+    };
+
+    useEffect(() => {
+        if (token) {
+            if (formId) fetchFormById();
+        }
+    }, [token]);
+
+    useEffect(() => {
+        const result = {};
+        formBox.forEach(element => {
+            const { role, type } = element.data;
+            const roleTypeKey = `${role}-${type}`;
+
+            if (result[roleTypeKey]) {
+                result[roleTypeKey]++;
+            } else {
+                result[roleTypeKey] = 1;
+            }
+        });
+
+        setClickCounts(result);
+    }, [formBox]);
+
+    // console.log(formId)
 
     return (
         <main className={styles.workspace}>
-            <Navbar />
+            <Navbar setWorkspaceId={setFormId} updateFormSequence={updateFormSequence} />
             <div className={styles.space}>
                 <div className={styles.sidebar}>
                     <span>Bubbles</span>
                     <div className={styles.bubbles}>
-                        {bubbleButtons.map((button, index) => (
-                            <button key={index}><img src={`/icons/${button.src}`} alt={`${button.src} icon`} />{button.text}</button>
+                        {adminButtons.map((button, index) => (
+                            <button key={index} onClick={() => handleAddBox(button)}>
+                                <img src={`/icons/${button.src}`} alt={`${button.src} icon`} />{button.type}
+                            </button>
                         ))}
                     </div>
                     <span>Inputs</span>
                     <div className={styles.inputs}>
-                        {inputButtons.map((button, index) => (
-                            <button key={index}><img src={`/icons/${button.src}`} alt={`${button.src} icon`} />{button.text}</button>
+                        {userButtons.map((button, index) => (
+                            <button key={index} onClick={() => handleAddBox(button)}>
+                                <img src={`/icons/${button.src}`} alt={`${button.src} icon`} />{button.type}
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -46,17 +197,8 @@ function Workspace() {
                             <span className={styles.title}>Start</span>
                         </div>
                     </div>
-                    <div className={styles.card}>
-                        <div className={styles.remove}>
-                            <img src="/icons/delete.png" alt="trash icon" />
-                        </div>
-                        <span className={styles.title}>Text</span>
-                        <div className={styles.inputBox}>
-                            <img src="/icons/chat.png" alt="chat icon" />
-                            <input type="text" placeholder="Click here to edit" />
-                        </div>
-                        <small></small>
-                    </div>
+                    {formBox.map((button, index) => renderFormBox(button, index))}
+                    <div className={styles.endCard}></div>
                 </div>
             </div>
         </main>
