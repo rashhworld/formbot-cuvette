@@ -1,5 +1,5 @@
-import React from 'react'
-import styles from '../../assets/lander/Highlight.module.css'
+import React from 'react';
+import styles from '../../assets/lander/Highlight.module.css';
 
 function Highlight() {
     return (

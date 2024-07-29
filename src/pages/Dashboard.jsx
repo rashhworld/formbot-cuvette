@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import useAuth from '../hooks/useAuth'
-import { handleApiRes, handleApiErr } from '../utils/apiUtils'
-
-import styles from '../assets/Dashboard.module.css'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import { userDashboardApi } from "../apis/User";
+import { createFolderApi, fetchAllFolderApi, deleteFolderApi } from "../apis/Folder";
+import { fetchAllFormApi, deleteFormApi } from "../apis/Form";
+import styles from '../assets/Dashboard.module.css';
 
 function Dashboard() {
     const token = useAuth();
     const navigate = useNavigate();
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const [userData, setUserData] = useState([]);
 
@@ -28,137 +26,51 @@ function Dashboard() {
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const openCreateModal = () => {
-        setFolderName('');
-        setFolderNameError('');
-        setCreateModalOpen(true);
-        setDeleteModalOpen(false);
-    }
+        setFolderName(''); setFolderNameError('');
+        setCreateModalOpen(true); setDeleteModalOpen(false);
+    };
 
     const openDeleteModal = (id, type = "folder") => {
         setEntityType(type); setFormId(null); setFolderId(null);
         if (type == "form") setFormId(id); else setFolderId(id);
-        setDeleteModalOpen(true);
-        setCreateModalOpen(false);
-    }
+        setDeleteModalOpen(true); setCreateModalOpen(false);
+    };
 
-    const showDashboard = async () => {
-        try {
-            const response = await axios.get(`${baseURL}/user/dashboard`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, data } = response.data;
-            if (status === 'success') {
-                setUserData(data);
-                fetchAllFolder();
-                fetchAllForm();
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+    const userDashboard = async () => {
+        const data = await userDashboardApi(token);
+        if (data) { setUserData(data); fetchAllFolder(); fetchAllForm(); }
     };
 
     const createFolder = async () => {
         setFolderNameError('');
+        if (folderName.trim().length === 0) { setFolderNameError('Enter folder name'); return; }
 
-        if (folderName.trim().length === 0) {
-            setFolderNameError('Enter folder name');
-        } else {
-            try {
-                const response = await axios.post(`${baseURL}/folder/create`, { folderName }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const { status, msg } = response.data;
-                if (status === 'success') {
-                    toast.success(msg);
-                    setCreateModalOpen(false);
-                    fetchAllFolder();
-                } else {
-                    handleApiRes(response.data);
-                }
-            } catch (error) {
-                handleApiErr(error, navigate);
-            }
-        }
+        const data = await createFolderApi(folderName, token);
+        if (data) { setCreateModalOpen(false); fetchAllFolder(); }
     };
 
     const fetchAllFolder = async () => {
-        try {
-            const response = await axios.get(`${baseURL}/folder/view`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, data } = response.data;
-            if (status === 'success') {
-                setAllFolder(data);
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+        const data = await fetchAllFolderApi(token);
+        if (data) setAllFolder(data);
     };
 
-    const openFolder = (id) => {
-        navigate(`/folder/${id}`);
-    }
-
     const deleteFolder = async () => {
-        try {
-            const response = await axios.delete(`${baseURL}/folder/delete/${folderId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, msg } = response.data;
-            if (status === 'success') {
-                toast.success(msg);
-                setDeleteModalOpen(false);
-                fetchAllFolder();
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+        const data = await deleteFolderApi(folderId, token);
+        if (data) { setDeleteModalOpen(false); fetchAllFolder(); };
     };
 
     const fetchAllForm = async () => {
-        try {
-            const response = await axios.get(`${baseURL}/form/view`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, data } = response.data;
-            if (status === 'success') {
-                setAllForm(data);
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+        const data = await fetchAllFormApi(token);
+        if (data) setAllForm(data);
     };
 
     const deleteForm = async () => {
-        try {
-            const response = await axios.delete(`${baseURL}/form/delete/${formId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, msg } = response.data;
-            if (status === 'success') {
-                toast.success(msg);
-                setDeleteModalOpen(false);
-                fetchAllForm();
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+        const data = await deleteFormApi(formId, token);
+        if (data) { setDeleteModalOpen(false); fetchAllForm(); };
     };
 
     useEffect(() => {
-        if (token) {
-            showDashboard();
-        }
+        if (token) { userDashboard(); }
     }, [token]);
 
     return (
@@ -183,7 +95,7 @@ function Dashboard() {
                     </button>
                     {allFolder.map((folder, key) => (
                         <button className={styles.createOpen} key={key}>
-                            <span onClick={() => openFolder(folder._id)}>{folder.folderName}</span>
+                            <span onClick={() => navigate(`/folder/${folder._id}`)}>{folder.folderName}</span>
                             <img src="/icons/delete.png" onClick={() => openDeleteModal(folder._id)} alt="trash icon" />
                         </button>
                     ))}

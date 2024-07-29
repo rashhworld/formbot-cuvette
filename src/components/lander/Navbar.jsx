@@ -1,6 +1,6 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import styles from '../../assets/lander/Navbar.module.css'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styles from '../../assets/lander/Navbar.module.css';
 
 function Navbar() {
   return (

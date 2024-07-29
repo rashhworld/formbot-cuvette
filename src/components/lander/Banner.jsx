@@ -1,6 +1,6 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import styles from '../../assets/lander/Banner.module.css'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styles from '../../assets/lander/Banner.module.css';
 
 function Banner() {
     return (

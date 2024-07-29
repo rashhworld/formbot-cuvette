@@ -1,6 +1,6 @@
-import React from 'react'
-import styles from '../../assets/lander/Result.module.css'
-import cstyles from '../../assets/Chatbox.module.css'
+import React from 'react';
+import styles from '../../assets/lander/Result.module.css';
+import cstyles from '../../assets/Chatbox.module.css';
 
 function Result() {
     const featureCards = [

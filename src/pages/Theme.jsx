@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from 'react'
-import { NavLink, useNavigate, useSearchParams } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import useAuth from '../hooks/useAuth'
-import { handleApiRes, handleApiErr } from '../utils/apiUtils'
-import Navbar from '../components/Navbar'
-
-import cstyles from '../assets/Chatbox.module.css'
-import styles from '../assets/Theme.module.css'
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import useAuth from '../hooks/useAuth';
+import { fetchFormByIdApi, updateFormApi } from "../apis/Form";
+import Navbar from '../components/Navbar';
+import cstyles from '../assets/Chatbox.module.css';
+import styles from '../assets/Theme.module.css';
 
 function Theme() {
     const token = useAuth();
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const [formId, setFormId] = useState(searchParams.get('wid'));
     const [currentTheme, setCurrentTheme] = useState('light');
@@ -25,37 +21,17 @@ function Theme() {
     ];
 
     const fetchFormById = async () => {
-        try {
-            const response = await axios.get(`${baseURL}/form/view/${formId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, data } = response.data;
-            if (status === 'success') {
-                const matchedTheme = themes.find(theme => theme.value === data.formTheme);
-                setCurrentTheme(matchedTheme.name);
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
+        const data = await fetchFormByIdApi(formId, token);
+        if (data) {
+            const matchedTheme = themes.find(theme => theme.value === data.formTheme);
+            setCurrentTheme(matchedTheme.name);
         }
     };
 
     const changeTheme = async (newTheme, value) => {
         setCurrentTheme(newTheme);
-        try {
-            const response = await axios.patch(`${baseURL}/form/update/${formId}`, { formTheme: value }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status } = response.data;
-            if (status === 'success') {
-                toast.success("Theme updated successfully.")
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+        const data = await updateFormApi(formId, { formTheme: value }, token);
+        if (data) toast.success("Theme updated successfully.");
     };
 
     useEffect(() => {

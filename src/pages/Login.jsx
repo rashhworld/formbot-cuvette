@@ -1,62 +1,49 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-
-import styles from '../assets/Auth.module.css'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { userLoginApi } from "../apis/User";
+import styles from '../assets/Auth.module.css';
 
 function Login() {
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
+    const navigate = useNavigate();
+    
     const [input, setInput] = useState({ email: "", password: "" });
     const [error, setError] = useState({ email: "", password: "" });
-    const navigate = useNavigate();
 
-    const loginUser = async () => {
-        try {
-            const response = await axios.post(`${baseURL}/user/login`, input);
-
-            const { status, msg, token } = response.data;
-            if (status === 'success') {
-                localStorage.setItem('authToken', token);
-                navigate('/dashboard');
-            } else {
-                toast.error(msg);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error("Something went wrong. Please re-login.");
+    const userLogin = async () => {
+        const token = await userLoginApi(input);
+        if (token) {
+            localStorage.setItem('authToken', token);
+            navigate('/dashboard');
         }
     };
 
-    function validateEmail(email) {
+    const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
-    }
+    };
 
-    function validateForm(e) {
+    const validateForm = (e) => {
         e.preventDefault();
 
         let isError = false;
         setError(() => ({ email: "", password: "" }));
 
-        Object.keys(input).forEach(key => {
+        Object.keys(input).forEach((key) => {
             const element = input[key];
             if (typeof element === 'string' && element.trim().length === 0) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "This field is required" }));
+                setError((error) => ({ ...error, [key]: "This field is required" }));
             } else if (key === 'email' && !validateEmail(element)) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "Enter a valid email Id" }));
+                setError((error) => ({ ...error, [key]: "Enter a valid email Id" }));
             } else if (key === 'password' && element.trim().length < 6) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "Password must be 6 characters long" }));
+                setError((error) => ({ ...error, [key]: "Password must be 6 characters long" }));
             }
         });
 
-        if (!isError) {
-            loginUser();
-        }
-    }
+        if (!isError) userLogin();
+    };
 
     return (
         <main className={styles.auth}>

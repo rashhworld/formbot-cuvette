@@ -1,7 +1,7 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import bstyles from '../../assets/lander/Banner.module.css'
-import styles from '../../assets/lander/PostBanner.module.css'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import bstyles from '../../assets/lander/Banner.module.css';
+import styles from '../../assets/lander/PostBanner.module.css';
 
 function PostBanner() {
     return (

@@ -1,71 +1,54 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-
-import styles from '../assets/Auth.module.css'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { userRegisterApi } from "../apis/User";
+import styles from '../assets/Auth.module.css';
 
 function Register() {
     const navigate = useNavigate();
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const [input, setInput] = useState({ username: "", email: "", password: "", confirmPassword: "" });
     const [error, setError] = useState({ username: "", email: "", password: "", confirmPassword: "" });
 
-    const registerUser = async () => {
-        try {
-            const response = await axios.post(`${baseURL}/user/register`, input);
-
-            const { status, msg } = response.data;
-            if (status === 'success') {
-                toast.success(msg);
-                navigate('/login');
-            } else {
-                toast.error(msg);
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error("Something went wrong. Please try again.");
-        }
+    const userRegister = async () => {
+        const data = await userRegisterApi(input);
+        if (data) navigate('/login');
     };
 
-    function validateEmail(email) {
+    const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
-    }
+    };
 
-    function validatePassword(password) {
+    const validatePassword = (password) => {
         const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
         return passwordRegex.test(password);
-    }
+    };
 
-    function validateForm(e) {
+    const validateForm = (e) => {
         e.preventDefault();
 
         let isError = false;
         setError(() => ({ username: "", email: "", password: "", confirmPassword: "" }));
 
-        Object.keys(input).forEach(key => {
+        Object.keys(input).forEach((key) => {
             const element = input[key];
             if (typeof element === 'string' && element.trim().length === 0) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "This field is required" }));
+                setError((error) => ({ ...error, [key]: "This field is required" }));
             } else if (key === 'email' && !validateEmail(element)) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "Enter a valid email Id" }));
+                setError((error) => ({ ...error, [key]: "Enter a valid email Id" }));
             } else if (key === 'password' && !validatePassword(element)) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "Password must be 6+ chars, incl. letter & number" }));
+                setError((error) => ({ ...error, [key]: "Password must be 6+ chars, incl. letter & number" }));
             } else if (key === 'confirmPassword' && element !== input.password) {
                 isError = true;
-                setError(error => ({ ...error, [key]: "Passwords do not match with above password" }));
+                setError((error) => ({ ...error, [key]: "Passwords do not match with above password" }));
             }
         });
 
-        if (!isError) {
-            registerUser();
-        }
-    }
+        if (!isError) userRegister();
+    };
 
     return (
         <main className={styles.auth}>

@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import useAuth from '../hooks/useAuth'
-import { handleApiRes, handleApiErr } from '../utils/apiUtils'
-
-import styles from '../assets/Navbar.module.css'
+import React, { useState, useEffect } from 'react';
+import { NavLink, useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import useAuth from '../hooks/useAuth';
+import { createFormApi, fetchFormByIdApi, updateFormApi } from "../apis/Form";
+import styles from '../assets/Navbar.module.css';
 
 function Navbar({ setWorkspaceId, updateFormSequence }) {
     const token = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
-    const currentUrl = `${location.pathname}${location.search}`;
     const [searchParams] = useSearchParams();
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const [folderId, setFolderId] = useState(searchParams.get('fid'));
     const [formId, setFormId] = useState(searchParams.get('wid'));
@@ -23,65 +18,28 @@ function Navbar({ setWorkspaceId, updateFormSequence }) {
 
     const createForm = async () => {
         setFormNameError('');
+        if (formName.trim().length === 0) { setFormNameError('Enter form name'); return; }
 
-        if (formName.trim().length === 0) {
-            setFormNameError('Enter form name');
-        } else {
-            try {
-                const response = await axios.post(`${baseURL}/form/create`, { folderId, formName }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const { status, formId } = response.data;
-                if (status === 'success') {
-                    setFormId(formId); setWorkspaceId(formId);
-                    navigate(`/workspace?wid=${formId}`);
-                } else {
-                    handleApiRes(response.data);
-                }
-            } catch (error) {
-                handleApiErr(error, navigate);
-            }
+        const formId = await createFormApi(folderId, formName, token);
+        if (formId) {
+            setFormId(formId); setWorkspaceId(formId);
+            navigate(`/workspace?wid=${formId}`);
         }
     };
 
     const fetchFormById = async () => {
-        try {
-            const response = await axios.get(`${baseURL}/form/view/${formId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, data } = response.data;
-            if (status === 'success') {
-                setFormName(data.formName);
-                setFormSequence(data.formSequence);
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
+        const data = await fetchFormByIdApi(formId, token);
+        if (data) {
+            setFormName(data.formName);
+            setFormSequence(data.formSequence);
         }
     };
 
     const updateForm = async () => {
-        setFormNameError('');
+        if (formName.trim().length === 0) return;
 
-        if (formName.trim().length === 0) {
-            setFormNameError('Enter form name');
-        } else {
-            try {
-                const response = await axios.patch(`${baseURL}/form/update/${formId}`, { formName }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const { status } = response.data;
-                if (status === 'success') {
-                    setFormName(formName);
-                    // toast.success("Form updated successfully.")
-                } else {
-                    handleApiRes(response.data);
-                }
-            } catch (error) {
-                handleApiErr(error, navigate);
-            }
-        }
+        const data = await updateFormApi(formId, { formName }, token);
+        if (data) setFormName(formName);
     };
 
     const handleFormSave = async () => {
@@ -94,7 +52,17 @@ function Navbar({ setWorkspaceId, updateFormSequence }) {
         } else {
             await createForm();
         }
-    }
+    };
+
+    const copyFormLink = async () => {
+        const link = `${window.location.origin}/share/${formId}`;
+        try {
+            await navigator.clipboard.writeText(link);
+            toast.success("Form link copied successfully.");
+        } catch (error) {
+            handleApiErr(error, navigate);
+        }
+    };
 
     useEffect(() => {
         if (token) {
@@ -108,12 +76,12 @@ function Navbar({ setWorkspaceId, updateFormSequence }) {
                 <input type="text" className={formNameError && 'error'} value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Enter Form Name" />
             </div>
             <div className={styles.formNav}>
-                <NavLink to={formId ? `/workspace?wid=${formId}` : currentUrl} className={({ isActive }) => isActive ? styles.active : ''}>Flow</NavLink>
-                <NavLink to={formId ? `/theme?wid=${formId}` : currentUrl} className={({ isActive }) => isActive && formId ? styles.active : ''}>Theme</NavLink>
-                <NavLink to={formId ? `/response?wid=${formId}` : currentUrl} className={({ isActive }) => isActive && formId ? styles.active : ''}>Response</NavLink>
+                <NavLink to={formId ? `/workspace?wid=${formId}` : window.location} className={({ isActive }) => isActive ? styles.active : ''}>Flow</NavLink>
+                <NavLink to={formId ? `/theme?wid=${formId}` : window.location} className={({ isActive }) => isActive && formId ? styles.active : ''}>Theme</NavLink>
+                <NavLink to={formId ? `/response?wid=${formId}` : window.location} className={({ isActive }) => isActive && formId ? styles.active : ''}>Response</NavLink>
             </div>
             <div className={styles.formAction}>
-                <button disabled={formSequence.length == 0}>Share</button>
+                <button disabled={formSequence.length == 0} onClick={copyFormLink}>Share</button>
                 <button onClick={handleFormSave}>Save</button>
                 <NavLink to="/dashboard"><img src="/icons/close.png" alt="close icon" /></NavLink>
             </div>

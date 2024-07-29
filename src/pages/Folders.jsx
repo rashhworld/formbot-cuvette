@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import useAuth from '../hooks/useAuth'
-import { handleApiRes, handleApiErr } from '../utils/apiUtils'
-
-import styles from '../assets/Dashboard.module.css'
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import { fetchAllFormByFolderApi } from "../apis/Folder";
+import { deleteFormApi } from "../apis/Form";
+import styles from '../assets/Dashboard.module.css';
 
 function Folders() {
     const token = useAuth();
-    const navigate = useNavigate();
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const { fid } = useParams();
     const [allForm, setAllForm] = useState([]);
@@ -19,48 +15,21 @@ function Folders() {
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const openDeleteModal = (id) => {
-        setFormId(id);
-        setDeleteModalOpen(true);
-    }
+        setFormId(id); setDeleteModalOpen(true);
+    };
 
     const fetchAllFormByFolder = async () => {
-        try {
-            const response = await axios.get(`${baseURL}/folder/view/${fid}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, data } = response.data;
-            if (status === 'success') {
-                setAllForm(data);
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+        const data = await fetchAllFormByFolderApi(fid, token);
+        if (data) setAllForm(data);
     };
 
     const deleteForm = async () => {
-        try {
-            const response = await axios.delete(`${baseURL}/form/delete/${formId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, msg } = response.data;
-            if (status === 'success') {
-                toast.success(msg);
-                setDeleteModalOpen(false);
-                fetchAllFormByFolder();
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+        const data = await deleteFormApi(formId, token);
+        if (data) { setDeleteModalOpen(false); fetchAllFormByFolder(); };
     };
 
     useEffect(() => {
-        if (token) {
-            fetchAllFormByFolder();
-        }
+        if (token) fetchAllFormByFolder();
     }, [token]);
 
     return (

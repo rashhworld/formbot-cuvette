@@ -1,5 +1,5 @@
-import React from 'react'
-import styles from '../../assets/lander/Footer.module.css'
+import React from 'react';
+import styles from '../../assets/lander/Footer.module.css';
 
 function Footer() {
     return (

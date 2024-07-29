@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import useAuth from '../hooks/useAuth'
-import { handleApiRes, handleApiErr } from '../utils/apiUtils'
-import Navbar from '../components/Navbar'
-
-import styles from '../assets/Workspace.module.css'
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import useAuth from '../hooks/useAuth';
+import { fetchFormByIdApi, updateFormApi } from "../apis/Form";
+import Navbar from '../components/Navbar';
+import styles from '../assets/Workspace.module.css';
 
 function Workspace() {
     const token = useAuth();
-    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const [formId, setFormId] = useState(searchParams.get('wid'));
     const [formBox, setFormBox] = useState([]);
@@ -79,7 +75,7 @@ function Workspace() {
         });
 
         setFormBox(newFormBox);
-    }
+    };
 
     const renderFormBox = (button, index) => {
         const { role, src, type, hint, value } = button.data;
@@ -93,7 +89,7 @@ function Workspace() {
                     {role === "admin" ? (
                         <div>
                             <img src={`/icons/${src}`} alt={`${type} icon`} />
-                            <input type="text" id="fvalue" value={value} className={!value ? "error" : ""} onChange={(e) => getFormBoxValue(index, e.target.value)} placeholder={hint} />
+                            <input type="text" id="fvalue" value={value} className={!value ? "error" : ""} onChange={(e) => getFormBoxValue(index, e.target.value)} placeholder={hint} autoComplete="off" />
                             {!value && <label htmlFor="fvalue" className="error">Required Field</label>}
                         </div>
                     ) : (
@@ -105,50 +101,23 @@ function Workspace() {
     };
 
     const fetchFormById = async () => {
-        try {
-            const response = await axios.get(`${baseURL}/form/view/${formId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, data } = response.data;
-            if (status === 'success') {
-                setFormBox(data.formSequence);
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+        const data = await fetchFormByIdApi(formId, token);
+        if (data) setFormBox(data.formSequence);
     };
 
     const updateFormSequence = async () => {
         let error = false;
-
         formBox.forEach((element) => {
             if (element.data.role === "admin" && !element.data.value) error = true;
         })
 
         if (!error) {
-            try {
-                const response = await axios.patch(`${baseURL}/form/update/${formId}`, { formSequence: formBox }, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const { status } = response.data;
-                if (status === 'success') {
-                    toast.success("Form updated successfully.");
-                } else {
-                    handleApiRes(response.data);
-                }
-            } catch (error) {
-                handleApiErr(error, navigate);
-            }
-        } else { toast.error("Please fill all the required fields"); }
-    };
-
-    useEffect(() => {
-        if (token) {
-            if (formId) fetchFormById();
+            const data = await updateFormApi(formId, { formSequence: formBox }, token);
+            if (data) toast.success("Form updated successfully.");
+        } else {
+            toast.error("Please fill all the required fields");
         }
-    }, [token]);
+    };
 
     useEffect(() => {
         const result = {};
@@ -166,7 +135,11 @@ function Workspace() {
         setClickCounts(result);
     }, [formBox]);
 
-    // console.log(formId)
+    useEffect(() => {
+        if (token) {
+            if (formId) fetchFormById();
+        }
+    }, [token]);
 
     return (
         <main className={styles.workspace}>

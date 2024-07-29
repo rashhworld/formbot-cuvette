@@ -1,16 +1,12 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import { toast } from 'react-toastify'
-import useAuth from '../hooks/useAuth'
-import { handleApiRes, handleApiErr } from '../utils/apiUtils'
-
-import styles from '../assets/Settings.module.css'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import { userUpdateApi } from "../apis/User";
+import styles from '../assets/Settings.module.css';
 
 function Settings() {
     const token = useAuth();
     const navigate = useNavigate();
-    const baseURL = import.meta.env.VITE_API_BASE_URL;
 
     const [input, setInput] = useState({ username: "", email: "", oldPassword: "", newPassword: "" });
     const [error, setError] = useState({ username: "", email: "", oldPassword: "", newPassword: "" });
@@ -18,38 +14,26 @@ function Settings() {
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
 
-    const updateUser = async () => {
-        try {
-            const response = await axios.post(`${baseURL}/user/update`, input, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const { status, msg } = response.data;
-            if (status === 'success') {
-                toast.success(msg);
-                navigate('/dashboard');
-            } else {
-                handleApiRes(response.data);
-            }
-        } catch (error) {
-            handleApiErr(error, navigate);
-        }
+    const userUpdate = async () => {
+        const data = await userUpdateApi(input, token);
+        if (data) navigate('/dashboard');
     };
 
-    function validateEmail(email) {
+    const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
-    }
+    };
 
-    function validatePassword(password) {
+    const validatePassword = (password) => {
         const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
         return passwordRegex.test(password);
-    }
+    };
 
-    function validateForm(e) {
-        e.preventDefault()
+    const validateForm = (e) => {
+        e.preventDefault();
 
         let isError = false;
-        setError(() => ({ username: "", email: "", oldPassword: "", newPassword: "", }));
+        setError(() => ({ username: "", email: "", oldPassword: "", newPassword: "" }));
 
         if (input.email && !validateEmail(input.email)) {
             isError = true;
@@ -78,10 +62,8 @@ function Settings() {
             }
         }
 
-        if (!isError) {
-            updateUser();
-        }
-    }
+        if (!isError) userUpdate();
+    };
 
     return (
         <main className={styles.settings}>

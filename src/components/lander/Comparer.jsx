@@ -1,6 +1,6 @@
-import React from 'react'
-import styles from '../../assets/lander/Comparer.module.css'
-import cstyles from '../../assets/Chatbox.module.css'
+import React from 'react';
+import styles from '../../assets/lander/Comparer.module.css';
+import cstyles from '../../assets/Chatbox.module.css';
 
 function Comparer() {
     return (

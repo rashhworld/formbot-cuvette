@@ -1,5 +1,5 @@
-import React from 'react'
-import styles from '../../assets/lander/Integration.module.css'
+import React from 'react';
+import styles from '../../assets/lander/Integration.module.css';
 
 function Integration() {
     const images = [
