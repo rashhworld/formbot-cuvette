@@ -74,6 +74,7 @@ label.error {
 input[type="text"],
 input[type="email"],
 input[type="password"],
+input[type="date"],
 textarea {
   width: 100%;
   box-sizing: border-box;

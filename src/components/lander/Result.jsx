@@ -56,7 +56,7 @@ function Result() {
                 </div>
                 <div className={cstyles.user}>
                     <div className={cstyles.chat}>
-                        <span className={cstyles.click}>Yeah!</span>
+                        <button className={cstyles.click}>Yeah!</button>
                     </div>
                 </div>
             </div>

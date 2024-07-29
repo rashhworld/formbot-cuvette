@@ -63,7 +63,7 @@ function Theme() {
                     </div>
                     <div className={cstyles.user}>
                         <div className={cstyles.chat}>
-                            <span className={cstyles.click}>Hi!</span>
+                            <button className={cstyles.click}>Hi!</button>
                         </div>
                     </div>
                 </div>
