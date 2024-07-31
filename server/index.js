@@ -15,6 +15,8 @@ dotenv.config();
 
 app.use(cors({
     origin: ["https://formbot-cuvette.vercel.app"],
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
