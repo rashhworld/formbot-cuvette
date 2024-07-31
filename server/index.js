@@ -13,7 +13,9 @@ const errorHandler = require('./src/middlewares/errorHandler');
 const app = express();
 dotenv.config();
 
-app.use(cors());
+app.use(cors({
+    origin: ["https://formbot-cuvette.vercel.app"],
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
