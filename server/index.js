@@ -13,13 +13,7 @@ const errorHandler = require('./src/middlewares/errorHandler');
 const app = express();
 dotenv.config();
 
-app.use(cors({
-    origin: 'https://formbot-server-cuvette.onrender.com', // Replace with your allowed origin
-    methods: 'GET, POST, PUT, DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
-    credentials: true
-}));
-
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
