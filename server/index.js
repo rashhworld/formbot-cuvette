@@ -14,7 +14,7 @@ const app = express();
 dotenv.config();
 
 app.use(cors({
-    origin: 'https://formbot-cuvette.vercel.app', // Replace with your allowed origin
+    origin: 'https://formbot-server-cuvette.onrender.com', // Replace with your allowed origin
     methods: 'GET, POST, PUT, DELETE',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true
