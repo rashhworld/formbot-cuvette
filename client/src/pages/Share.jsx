@@ -108,7 +108,7 @@ function Share() {
                         <div key={item.key + index} className={cstyles[item.data.role]}>
                             {item.data.role === 'admin' ? (
                                 <>
-                                    <img className={cstyles.chatHead} src="/images/chat-head-admin.png" alt="admin chat-head" />
+                                    <img className={cstyles.chatHead} src="/images/vectors/chat-head.png" alt="admin chat-head" />
                                     <div className={cstyles.chat}>
                                         <span><AdminContent item={item} /></span>
                                     </div>
