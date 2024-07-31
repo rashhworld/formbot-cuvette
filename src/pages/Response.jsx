@@ -1,9 +1,54 @@
-import React, { useState } from 'react'
-import Navbar from '../components/Navbar'
-import styles from '../assets/Response.module.css'
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import { fetchFormByIdApi } from "../apis/Form";
+import Navbar from '../components/Navbar';
+import styles from '../assets/Response.module.css';
 
 function Response() {
+    const token = useAuth();
+    const [searchParams] = useSearchParams();
+
+    const [formId, setFormId] = useState(searchParams.get('wid'));
+    const [formStarts, setFormStarts] = useState(0);
+    const [formCompletion, setFormCompletion] = useState(0);
+
     const [noResponse, setNoResponse] = useState(false);
+    const [formData, setFormData] = useState({ formHits: 0, formSequence: [], formResponse: [] });
+
+    const { formHits, formSequence, formResponse } = formData;
+    const headers = formSequence.filter((data) => data.key.includes("user")).map(item => item.key);
+
+    const getFromStats = () => {
+        let starts = 0, completes = 0;
+        const seqLength = formSequence.filter(item => item.data.role === 'user').length;
+
+        formResponse.forEach((item) => {
+            const resLength = Object.keys(item).length;
+            seqLength == resLength - 2 ? completes++ : starts++;
+        })
+
+        setFormStarts(starts);
+        setFormCompletion(completes);
+    };
+
+    const fetchFormById = async () => {
+        const data = await fetchFormByIdApi(formId, token);
+        setFormData(data);
+        if (data.formResponse.length == 0) setNoResponse(true);
+    };
+
+    useEffect(() => {
+        if (token && formId) {
+            fetchFormById();
+        }
+    }, [token, formId]);
+
+    useEffect(() => {
+        if (token && formId) {
+            getFromStats();
+        }
+    }, [formSequence, formResponse]);
 
     return (
         <div className={styles.response}>
@@ -13,64 +58,46 @@ function Response() {
                 <div className={styles.brief}>
                     <div className={styles.card}>
                         <p>Views</p>
-                        <p>6</p>
+                        <p>{formHits}</p>
                     </div>
                     <div className={styles.card}>
                         <p>Starts</p>
-                        <p>3</p>
+                        <p>{formStarts}</p>
                     </div>
                     <div className={styles.card}>
                         <p>Completion rate</p>
-                        <p>33%</p>
+                        <p>{formHits ? parseInt(formCompletion / formHits * 100) : 0} %</p>
                     </div>
                 </div>
                 <div className={styles.tableContainer}>
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>First interaction time</th>
-                                <th>Button 1</th>
-                                <th>Email 1</th>
-                                <th>Text 1</th>
-                                <th>Button 2</th>
-                                <th>Rating 1</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>July 17, 03:23 PM</td>
-                                <td>Hi!</td>
-                                <td>abc@g.com</td>
-                                <td>alpha</td>
-                                <td>Studio App to Manage Clients</td>
-                                <td>5</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>July 17, 03:23 PM</td>
-                                <td>Hi!</td>
-                                <td>abc@g.com</td>
-                                <td>fsdfasd</td>
-                                <td></td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>July 17, 03:23 PM</td>
-                                <td>Hi!</td>
-                                <td>abc@g.com</td>
-                                <td></td>
-                                <td></td>
-                                <td>4</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    {formResponse.length > 0 && (
+                        <table className={styles.table}>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>First Interaction Time</th>
+                                    {headers.map((key) => (
+                                        <th key={key}>{key.split("-")[1].split(":").join(" ")}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {formResponse.map((valueRow, index) => (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{valueRow.startDate}</td>
+                                        {headers.map((key) => (
+                                            <td key={key}>{valueRow[key]}</td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </section>
         </div>
     )
 }
 
-export default Response
+export default Response;

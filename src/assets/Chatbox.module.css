@@ -7,12 +7,6 @@
     max-width: calc(100% - 50px);
 }
 
-.chatbox span {
-    padding: 10px 15px;
-    border-radius: 5px;
-    max-width: fit-content;
-}
-
 .chatbox img,
 .chatbox video {
     width: 100%;
@@ -34,6 +28,9 @@
 }
 
 .chatbox .admin span {
+    padding: 10px 15px;
+    border-radius: 5px;
+    max-width: fit-content;
     background: #f8f7ff;
     color: #000;
 }
@@ -44,6 +41,7 @@
 }
 
 .chatbox .user .chat {
+    margin-bottom: 10px;
     align-items: flex-end;
 }
 
@@ -62,4 +60,10 @@
     height: 10px;
     background-color: var(--accent-color);
     border-radius: 50%;
+}
+
+@media only screen and (max-width: 600px) {
+    .chatbox {
+        width: 100% !important;
+    }
 }

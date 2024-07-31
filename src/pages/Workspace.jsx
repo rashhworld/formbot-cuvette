@@ -28,7 +28,7 @@ function Workspace() {
         { role: "user", src: "call.png", type: "Phone", hint: "input a phone on his form" },
         { role: "user", src: "calendar.png", type: "Date", hint: "select a date" },
         { role: "user", src: "star.png", type: "Rating", hint: "tap to rate out of 5" },
-        { role: "user", src: "checkbox.png", type: "Buttons", hint: "click on the button" }
+        { role: "user", src: "checkbox.png", type: "Button", hint: "Click to add button text", value: "" }
     ];
 
     const handleAddBox = (data) => {
@@ -78,7 +78,7 @@ function Workspace() {
     };
 
     const renderFormBox = (button, index) => {
-        const { role, src, type, hint, value } = button.data;
+        const { role, src, type, hint, value, label } = button.data;
         return (
             <div key={index} className={styles.card}>
                 <div className={styles.remove} onClick={() => handleRemoveBox(index)} >
@@ -93,7 +93,14 @@ function Workspace() {
                             {!value && <label htmlFor="fvalue" className="error">Required Field</label>}
                         </div>
                     ) : (
-                        <span className={styles.hintText}>Hint: User will {hint}</span>
+                        type === "Button" ? (
+                            <div>
+                                <input type="text" id="fvalue" value={value} className={!value ? "error" : ""} onChange={(e) => getFormBoxValue(index, e.target.value)} placeholder={hint} autoComplete="off" />
+                                {!value && <label htmlFor="fvalue" className="error">Required Field</label>}
+                            </div>
+                        ) : (
+                            <span className={styles.hintText}>Hint: User will {hint}</span>
+                        )
                     )}
                 </div>
             </div>

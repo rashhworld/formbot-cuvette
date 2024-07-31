@@ -1,64 +1,102 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import moment from 'moment';
+import { shareFormApi, countFormHitApi, saveFormResponseApi } from "../apis/Form";
 import cstyles from '../assets/Chatbox.module.css';
 import styles from '../assets/Share.module.css';
 
 function Share() {
-    const formSequence = [
-        {
-            key: "admin-Text:1",
-            data: {
-                role: "admin",
-                src: "chat.png",
-                type: "Text",
-                hint: "Click here to edit",
-                value: "Enter your name"
-            }
-        },
-        {
-            key: "user-Text:1",
-            data: {
-                role: "user",
-                src: "text.png",
-                type: "Text",
-                hint: "input a text on his form"
-            }
-        },
-        {
-            key: "admin-Text:2",
-            data: {
-                role: "admin",
-                src: "chat.png",
-                type: "Text",
-                hint: "Click here to edit",
-                value: "Enter your email"
-            }
-        },
-        {
-            key: "user-Email:1",
-            data: {
-                role: "user",
-                src: "at.png",
-                type: "Email",
-                hint: "input a email on his form"
-            }
-        }
-    ];
+    const { wid } = useParams();
+    const vid = Math.floor(10000 + Math.random() * 90000);
+    const startDate = moment().format('MMM DD, hh:mm A');
 
-    const [inputValue, setInputValue] = useState({});
-    const [ratingValue, setRatingValue] = useState('');
-    const [userData, setUserData] = useState({});
+    const [formData, setFormData] = useState({});
+    const [formSequence, setFormSequence] = useState({});
+    const [formResponse, setFormResponse] = useState({ vid, startDate });
+
+    const [activeRating, setActiveRating] = useState('');
+    const [hitFlag, setHitFlag] = useState(true);
+    const [shareBox, setShareBox] = useState([]);
+    const [shareBoxIndex, setShareBoxIndex] = useState(0);
+    const [disableFlagArr, setDisableFlagArr] = useState([]);
+
+    const fetchFormById = async () => {
+        const data = await shareFormApi(wid);
+        if (data) {
+            setFormData(data); setFormSequence(data.formSequence);
+
+        }
+    };
 
     const getInputValue = (key, value) => {
-        setUserData((prevData) => ({
+        setFormResponse((prevData) => ({
             ...prevData, [key]: value
         }));
     };
 
-    const setIsSubmit = (key) => {
-        const existingIndex = userData.find(item => item[key] === key);
+    const setIsSubmit = async (key, e) => {
+        e && e.preventDefault();
+        if (!key.includes("Button") && !(key in formResponse)) return;
+        await saveFormResponseApi(wid, formResponse);
+        console.log(formResponse)
+
+        setDisableFlagArr(prevArray => {
+            const newArray = [...prevArray];
+            newArray[shareBoxIndex] = true;
+            return newArray;
+        });
+
+        const n = formSequence.length;
+        let idx = shareBoxIndex;
+        const newItems = [];
+
+        while (idx + 1 < n) {
+            idx += 1;
+            newItems.push(formSequence[idx]);
+            if (formSequence[idx].data.role === 'user') {
+                break;
+            }
+        }
+
+        setShareBox((prev) => [...prev, ...newItems]);
+        setShareBoxIndex(idx);
     };
 
-    const renderAdminContent = (item) => {
+    useEffect(() => {
+        const adminItems = [];
+        const n = formSequence.length;
+        let idx = -1;
+
+        for (let i = 0; i < n; i++) {
+            if (formSequence[i].data.role === 'admin') {
+                adminItems.push(formSequence[i]);
+            }
+            else {
+                adminItems.push(formSequence[i]);
+                idx = i;
+                break;
+            }
+        }
+
+        const boolArr = new Array(n).fill(false);
+        setDisableFlagArr(boolArr);
+        setShareBox(adminItems);
+        setShareBoxIndex(idx);
+    }, [formSequence]);
+
+    useEffect(() => {
+        if (wid) fetchFormById();
+        const fromHit = async () => {
+            if (hitFlag) {
+                await countFormHitApi(wid);
+                setHitFlag(false)
+            }
+        }
+
+        fromHit();
+    }, []);
+
+    const renderAdminContent = (item, index) => {
         if (item.data.type === 'Image' || item.data.type === 'GIF') {
             return <img src={item.data.value} alt="admin content" />;
         } else if (item.data.type === 'Video') {
@@ -72,57 +110,62 @@ function Share() {
         }
     };
 
-    const renderUserContent = (item) => {
-        const { type } = item.data;
+    const renderUserContent = (item, index) => {
+        const { type, value } = item.data;
+
         if (type === 'Text' || type === 'Number' || type === 'Email' || type === 'Phone' || type === 'Date') {
             return (
-                <div className={styles.inputs}>
-                    <input type={type} id={item.key} onChange={(e) => getInputValue(item.key, e.target.value)} placeholder={`Enter your ${type}`} required/>
-                    <button className={styles.submitBtn} onClick={() => setIsSubmit(item.key)}><img src="/icons/send.png" alt="send icon" /></button>
-                </div>
+                <form className={styles.inputs} onSubmit={(e) => setIsSubmit(item.key, e)}>
+                    <input type={type} id={item.key} onChange={(e) => getInputValue(item.key, e.target.value)} placeholder={`Enter Your ${type}`} autoComplete="off" required disabled={disableFlagArr[index]} />
+                    <button className={styles.submitBtn} disabled={disableFlagArr[index]}>
+                        <img src="/icons/send.png" alt="send icon" />
+                    </button>
+                </form>
             );
-        } else if (type === 'Rate') {
+        } else if (type === 'Rating') {
             return (
                 <div className={styles.inputs}>
-                    <div className={styles.rating}>
-                        {[1, 2, 3, 4, 5].map((i) => (
-                            <button key={i} onClick={() => getInputValue(item.key, i)}>{i}</button>
+                    <div className={`${styles.rating} ${disableFlagArr[index] ? styles.disabled : ''}`}>
+                        {[1, 2, 3, 4, 5].map((i, idx) => (
+                            <button key={i} className={activeRating === idx ? styles.activeRating : ''} onClick={() => { getInputValue(item.key, i); setActiveRating(idx); }}>{i}</button>
                         ))}
                     </div>
-                    <button className={styles.submitBtn}><img src="/icons/send.png" alt="send icon" /></button>
+                    <button className={styles.submitBtn} onClick={() => setIsSubmit(item.key)} disabled={disableFlagArr[index]}>
+                        <img src="/icons/send.png" alt="send icon" />
+                    </button>
                 </div>
             );
-        } else if (type === 'buttons') {
+        } else if (type === 'Button') {
             return (
-                <button key={index}>Click</button>
+                <button key={index} className={styles.inputBtn} onClick={() => { getInputValue(item.key, value); setIsSubmit(item.key); }} disabled={disableFlagArr[index]}>{value}</button>
             );
         } else {
             return null;
         }
     };
 
-    console.log(userData)
-
     return (
-        <section className={styles.shareLayout}>
-            <div className={`${styles.chatbox} ${cstyles.chatbox}`}>
-                {formSequence.map((item) => (
-                    <div key={item.key} className={cstyles[item.data.role]}>
-                        {item.data.role === 'admin' ? (
-                            <>
-                                <img className={cstyles.chatHead} src="/images/chat-head-admin.png" alt="admin chat-head" />
+        <section className={styles.shareLayout} style={{ background: formData.formTheme }}>
+            {shareBox.length > 0 && (
+                <div className={`${styles.chatbox} ${cstyles.chatbox}`}>
+                    {shareBox.map((item, index) => (
+                        <div key={item.key + index} className={cstyles[item.data.role]}>
+                            {item.data.role === 'admin' ? (
+                                <>
+                                    <img className={cstyles.chatHead} src="/images/chat-head-admin.png" alt="admin chat-head" />
+                                    <div className={cstyles.chat}>
+                                        <span>{renderAdminContent(item, index)}</span>
+                                    </div>
+                                </>
+                            ) : (
                                 <div className={cstyles.chat}>
-                                    <span>{renderAdminContent(item)}</span>
+                                    {renderUserContent(item, index)}
                                 </div>
-                            </>
-                        ) : (
-                            <div className={cstyles.chat}>
-                                <span>{renderUserContent(item)}</span>
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
         </section>
     )
 }

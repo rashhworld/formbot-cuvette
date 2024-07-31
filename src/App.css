@@ -71,10 +71,7 @@ label.error {
   font-weight: normal;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="date"],
+input,
 textarea {
   width: 100%;
   box-sizing: border-box;
@@ -100,4 +97,10 @@ textarea.error {
 
 .Toastify__toast-container {
   width: fit-content !important;
+}
+
+@media only screen and (max-width: 600px) {
+  section {
+    padding: 20px 10px;
+  }
 }

@@ -45,14 +45,6 @@
     box-sizing: border-box;
 }
 
-.content.dark {
-    background: var(--primary-bg);
-}
-
-.content.blue {
-    background: #508C9B;
-}
-
 .card.active {
     border: 5px solid var(--accent-color);
 }

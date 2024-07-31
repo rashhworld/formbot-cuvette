@@ -9,8 +9,9 @@ export const createFormApi = async (folderId, formName, token) => {
             headers: { Authorization: `Bearer ${token}` }
         });
 
-        const { status, formId } = response.data;
+        const { status, formId, msg } = response.data;
         if (status === 'success') {
+            toast.success(msg);
             return formId;
         } else {
             handleApiRes(response.data);
@@ -81,6 +82,52 @@ export const deleteFormApi = async (formId, token) => {
         if (status === 'success') {
             toast.success(msg);
             return true;
+        } else {
+            handleApiRes(response.data);
+        }
+    } catch (error) {
+        handleApiErr(error, navigate);
+    }
+};
+
+export const shareFormApi = async (formId) => {
+    try {
+        const response = await axios.get(`${baseURL}/form/share/${formId}`);
+
+        const { status, data } = response.data;
+        if (status === 'success') {
+            return data;
+        } else {
+            handleApiRes(response.data);
+        }
+    } catch (error) {
+        handleApiErr(error, navigate);
+    }
+};
+
+export const countFormHitApi = async (formId) => {
+    try {
+        const response = await axios.post(`${baseURL}/form/hits/${formId}`);
+
+        const { status, msg } = response.data;
+        if (status === 'success') {
+            return msg;
+        } else {
+            handleApiRes(response.data);
+        }
+    } catch (error) {
+        handleApiErr(error, navigate);
+    }
+};
+
+export const saveFormResponseApi = async (formId, formResponse) => {
+    console.log(formResponse)
+    try {
+        const response = await axios.post(`${baseURL}/form/response/${formId}`, formResponse);
+
+        const { status, msg, data } = response.data;
+        if (status === 'success') {
+            return data;
         } else {
             handleApiRes(response.data);
         }
