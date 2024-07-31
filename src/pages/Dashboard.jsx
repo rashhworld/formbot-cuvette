@@ -4,6 +4,12 @@ import useAuth from '../hooks/useAuth';
 import { userDashboardApi } from "../apis/User";
 import { createFolderApi, fetchAllFolderApi, deleteFolderApi } from "../apis/Folder";
 import { fetchAllFormApi, deleteFormApi } from "../apis/Form";
+
+import FolderButton from '../components/dashboard/FolderButton';
+import FormCard from '../components/dashboard/FormCard';
+import CreateFolderModal from '../components/dashboard/CreateFolderModal';
+import DeleteModal from '../components/dashboard/DeleteModal';
+
 import styles from '../assets/Dashboard.module.css';
 
 function Dashboard() {
@@ -78,7 +84,7 @@ function Dashboard() {
             <div className={styles.navbar}>
                 <div className={`${styles.dropdown} ${isDropdownOpen ? styles.show : ''}`}>
                     <button className={styles.dropdownBtn} onClick={() => setDropdownOpen(!isDropdownOpen)}>
-                        <span>{userData.username}'s workspace</span>
+                        <span>{userData.username ? `${userData.username}'s workspace` : "workspace"}</span>
                         <img className={styles.arrowDown} src="/icons/arrow-angle-down.png" alt="arrow-down icon" />
                     </button>
                     <div className={styles.dropdownContent}>
@@ -93,51 +99,35 @@ function Dashboard() {
                         <img src="/icons/folder-create.png" alt="folder icon" />
                         <span>Create a folder</span>
                     </button>
-                    {allFolder.map((folder, key) => (
-                        <button className={styles.createOpen} key={key}>
-                            <span onClick={() => navigate(`/folder/${folder._id}`)}>{folder.folderName}</span>
-                            <img src="/icons/delete.png" onClick={() => openDeleteModal(folder._id)} alt="trash icon" />
-                        </button>
-                    ))}
+                    <FolderButton
+                        folders={allFolder}
+                        onDelete={(id) => openDeleteModal(id)}
+                    />
                 </div>
                 <div className={styles.forms}>
                     <Link to="/workspace" className={styles.card}>
                         <img src="/icons/plus.png" alt="plus icon" />
                         <span>Create a typebot</span>
                     </Link>
-                    {allForm.map((form, key) => (
-                        <div className={styles.formCard} key={key}>
-                            <img className={styles.delete} src="/icons/delete.png" onClick={() => openDeleteModal(form._id, 'form')} width={20} alt="trash icon" />
-                            <Link to={`/workspace?wid=${form._id}`} className={`${styles.card} ${styles.created}`}>
-                                <span>{form.formName}</span>
-                            </Link>
-                        </div>
-                    ))}
+                    <FormCard
+                        forms={allForm}
+                        onDelete={(id, type) => openDeleteModal(id, type)}
+                    />
                     {isCreateModalOpen &&
-                        <div className={styles.createFolderModal}>
-                            <span>Create New Folder</span>
-                            <form>
-                                <div className={styles.inputs}>
-                                    <input type="text" className={folderNameError && 'error'} value={folderName} onChange={(e) => setFolderName(e.target.value)} placeholder="Enter folder name" />
-                                    <label className="error">{folderNameError}</label>
-                                </div>
-                                <div className={styles.action}>
-                                    <span className={styles.confirm} onClick={createFolder}>Done</span>
-                                    <span></span>
-                                    <span className={styles.cancel} onClick={() => setCreateModalOpen(false)}>Cancel</span>
-                                </div>
-                            </form>
-                        </div>
+                        <CreateFolderModal
+                            folderName={folderName}
+                            folderNameError={folderNameError}
+                            onNameChange={(e) => setFolderName(e.target.value)}
+                            onCreate={createFolder}
+                            onClose={() => setCreateModalOpen(false)}
+                        />
                     }
                     {isDeleteModalOpen &&
-                        <div className={styles.deleteFolderModal}>
-                            <span>Are you sure you want to delete this {entityType} ?</span>
-                            <div className={styles.action}>
-                                <span className={styles.confirm} onClick={entityType == "folder" ? deleteFolder : deleteForm}>Confirm</span>
-                                <span></span>
-                                <span className={styles.cancel} onClick={() => setDeleteModalOpen(false)}>Cancel</span>
-                            </div>
-                        </div>
+                        <DeleteModal
+                            entityType={entityType}
+                            onDelete={entityType === "folder" ? deleteFolder : deleteForm}
+                            onClose={() => setDeleteModalOpen(false)}
+                        />
                     }
                 </div>
             </div>

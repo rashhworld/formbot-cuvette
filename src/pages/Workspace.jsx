@@ -3,7 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useAuth from '../hooks/useAuth';
 import { fetchFormByIdApi, updateFormApi } from "../apis/Form";
+
 import Navbar from '../components/Navbar';
+import FormBox from '../components/workspace/FormBox';
+
 import styles from '../assets/Workspace.module.css';
 
 function Workspace() {
@@ -12,6 +15,7 @@ function Workspace() {
 
     const [formId, setFormId] = useState(searchParams.get('wid'));
     const [formBox, setFormBox] = useState([]);
+    const [formBoxError, setFormBoxError] = useState({});
     const [clickCounts, setClickCounts] = useState({});
 
     const adminButtons = [
@@ -75,36 +79,10 @@ function Workspace() {
         });
 
         setFormBox(newFormBox);
-    };
 
-    const renderFormBox = (button, index) => {
-        const { role, src, type, hint, value, label } = button.data;
-        return (
-            <div key={index} className={styles.card}>
-                <div className={styles.remove} onClick={() => handleRemoveBox(index)} >
-                    <img src="/icons/delete.png" alt="trash icon" />
-                </div>
-                <span className={styles.title}>{`${role === "user" ? 'Input ' : ''}${type} ${button.key.split(":")[1]}`}</span>
-                <div className={styles.inputBox}>
-                    {role === "admin" ? (
-                        <div>
-                            <img src={`/icons/${src}`} alt={`${type} icon`} />
-                            <input type="text" id="fvalue" value={value} className={!value ? "error" : ""} onChange={(e) => getFormBoxValue(index, e.target.value)} placeholder={hint} autoComplete="off" />
-                            {!value && <label htmlFor="fvalue" className="error">Required Field</label>}
-                        </div>
-                    ) : (
-                        type === "Button" ? (
-                            <div>
-                                <input type="text" id="fvalue" value={value} className={!value ? "error" : ""} onChange={(e) => getFormBoxValue(index, e.target.value)} placeholder={hint} autoComplete="off" />
-                                {!value && <label htmlFor="fvalue" className="error">Required Field</label>}
-                            </div>
-                        ) : (
-                            <span className={styles.hintText}>Hint: User will {hint}</span>
-                        )
-                    )}
-                </div>
-            </div>
-        );
+        setFormBoxError(prevErrors => ({
+            ...prevErrors, [index]: value === '' ? 'Required Field' : null
+        }));
     };
 
     const fetchFormById = async () => {
@@ -114,15 +92,24 @@ function Workspace() {
 
     const updateFormSequence = async () => {
         let error = false;
-        formBox.forEach((element) => {
-            if (element.data.role === "admin" && !element.data.value) error = true;
-        })
+        const newErrors = {};
+
+        formBox.forEach((element, index) => {
+            const { role, type, value } = element.data;
+
+            if (role === 'admin' || (role === 'user' && type === 'Button')) {
+                if (!value) {
+                    error = true;
+                    newErrors[index] = 'Required Field';
+                }
+            }
+        });
+
+        setFormBoxError(newErrors);
 
         if (!error) {
             const data = await updateFormApi(formId, { formSequence: formBox }, token);
             if (data) toast.success("Form updated successfully.");
-        } else {
-            toast.error("Please fill all the required fields");
         }
     };
 
@@ -177,7 +164,16 @@ function Workspace() {
                             <span className={styles.title}>Start</span>
                         </div>
                     </div>
-                    {formBox.map((button, index) => renderFormBox(button, index))}
+                    {formBox.map((button, index) => (
+                        <FormBox
+                            key={index}
+                            button={button}
+                            index={index}
+                            handleRemoveBox={handleRemoveBox}
+                            getFormBoxValue={getFormBoxValue}
+                            formBoxError={formBoxError}
+                        />
+                    ))}
                     <div className={styles.endCard}></div>
                 </div>
             </div>
