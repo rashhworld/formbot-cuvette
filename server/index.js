@@ -13,11 +13,20 @@ const errorHandler = require('./src/middlewares/errorHandler');
 const app = express();
 dotenv.config();
 
-app.use(cors({
-    origin: ["https://formbot-cuvette.vercel.app"],
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-    credentials: true
-}));
+const corsOpts = {
+  origin: '*',
+
+  methods: [
+    'GET',
+    'POST',
+  ],
+
+  allowedHeaders: [
+    'Content-Type',
+  ],
+};
+
+app.use(cors(corsOpts));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
