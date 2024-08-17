@@ -19,11 +19,6 @@ function Register() {
         return emailRegex.test(email);
     };
 
-    const validatePassword = (password) => {
-        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
-        return passwordRegex.test(password);
-    };
-
     const validateForm = (e) => {
         e.preventDefault();
 
@@ -38,9 +33,9 @@ function Register() {
             } else if (key === 'email' && !validateEmail(element)) {
                 isError = true;
                 setError((error) => ({ ...error, [key]: "Enter a valid email Id" }));
-            } else if (key === 'password' && !validatePassword(element)) {
+            } else if (key === 'password' && element.trim().length < 6) {
                 isError = true;
-                setError((error) => ({ ...error, [key]: "Password must be 6+ chars, incl. letter & number" }));
+                setError((error) => ({ ...error, [key]: "Password must be 6 characters long" }));
             } else if (key === 'confirmPassword' && element !== input.password) {
                 isError = true;
                 setError((error) => ({ ...error, [key]: "Passwords do not match with above password" }));
