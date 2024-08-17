@@ -24,11 +24,6 @@ function Settings() {
         return emailRegex.test(email);
     };
 
-    const validatePassword = (password) => {
-        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
-        return passwordRegex.test(password);
-    };
-
     const validateForm = (e) => {
         e.preventDefault();
 
@@ -41,9 +36,9 @@ function Settings() {
         }
 
         if (input.oldPassword) {
-            if (!validatePassword(input.oldPassword)) {
+            if (input.oldPassword.trim().length < 6) {
                 isError = true;
-                setError((error) => ({ ...error, oldPassword: 'Password must be 6+ chars, incl. letter & number' }));
+                setError((error) => ({ ...error, oldPassword: 'Password must be 6 characters long' }));
             }
             if (!input.newPassword) {
                 isError = true;
@@ -52,9 +47,9 @@ function Settings() {
         }
 
         if (input.newPassword) {
-            if (!validatePassword(input.newPassword)) {
+            if (input.newPassword.trim().length < 6) {
                 isError = true;
-                setError((error) => ({ ...error, newPassword: 'Password must be 6+ chars, incl. letter & number' }));
+                setError((error) => ({ ...error, newPassword: 'Password must be 6 characters long' }));
             }
             if (!input.oldPassword) {
                 isError = true;
