@@ -4,7 +4,6 @@ const validateUser = (req, res, next) => {
         const path = req.path;
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{6,}$/;
 
         if (path === '/user/login') {
             if (!email || !password) {
@@ -20,8 +19,8 @@ const validateUser = (req, res, next) => {
             if (!emailRegex.test(email)) {
                 throw Object.assign(Error("Please provide a valid email address"), { code: 400 });
             }
-            if (!passwordRegex.test(password)) {
-                throw Object.assign(Error("Password must be 6 characters long and include a letter and a number"), { code: 400 });
+            if (password.trim().length < 6) {
+                throw Object.assign(Error("Password must be 6 characters long"), { code: 400 });
             }
             if (password !== confirmPassword) {
                 throw Object.assign(Error("Password and confirm password must match"), { code: 400 });
@@ -31,8 +30,8 @@ const validateUser = (req, res, next) => {
                 throw Object.assign(Error("Please provide a valid email address"), { code: 400 });
             }
             if (newPassword) {
-                if (!passwordRegex.test(newPassword)) {
-                    throw Object.assign(Error("New password must be 6 characters long and include a letter and a number"), { code: 400 });
+                if (newPassword.trim().length < 6) {
+                    throw Object.assign(Error("Password must be 6 characters long"), { code: 400 });
                 }
                 if (!oldPassword) {
                     throw Object.assign(Error("Please provide your old password to set a new password"), { code: 400 });
